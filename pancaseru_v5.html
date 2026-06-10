@@ -1,0 +1,2821 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PancaSeru — Belajar Pancasila Asyik!</title>
+<meta name="description" content="PancaSeru: Aplikasi belajar Pancasila yang seru dan interaktif untuk anak SD! Ada game, kuis, misi, dan ular tangga multiplayer.">
+<meta name="keywords" content="pancasila, belajar pancasila, game pancasila, pendidikan SD, PKN, ular tangga pancasila">
+<meta name="author" content="Siska Tiara — Universitas Pendidikan Indonesia">
+<meta property="og:title" content="PancaSeru — Belajar Pancasila Asyik!">
+<meta property="og:description" content="Game edukatif Pancasila untuk anak SD. Belajar sambil bermain dengan fitur Misi, Ular Tangga, Kuis, dan Battle!">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#D83B2A">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="PancaSeru">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23D83B2A'/%3E%3Ctext y='.9em' font-size='80' x='10'%3E🦅%3C/text%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{width:100%;min-height:100%;font-family:'Nunito',sans-serif;background:#FFF8F0;color:#2d2d2d;overflow-x:hidden;}
+
+/* ===== ONBOARDING ===== */
+#onboarding{position:fixed;inset:0;background:linear-gradient(145deg,#D83B2A 0%,#B02010 40%,#7A0E00 100%);z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;overflow-y:auto;padding:1rem;}
+.ob-step{display:none;width:100%;max-width:420px;animation:fadeUp 0.4s ease;}
+.ob-step.active{display:flex;flex-direction:column;align-items:center;}
+@keyframes fadeUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+.ob-logo{font-family:'Fredoka One',cursive;font-size:2.5rem;color:#FFD060;margin-top:1.5rem;text-shadow:0 3px 12px rgba(0,0,0,0.3);}
+.ob-logo span{color:#fff;}
+.ob-tagline{font-size:0.85rem;color:rgba(255,255,255,0.8);letter-spacing:2px;font-weight:700;text-transform:uppercase;margin-bottom:1.5rem;}
+
+.ob-card{background:#fff;border-radius:24px;padding:1.5rem;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.25);}
+.ob-card-title{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#D83B2A;margin-bottom:0.3rem;text-align:center;}
+.ob-card-sub{font-size:0.82rem;color:#aaa;text-align:center;margin-bottom:1.2rem;}
+
+.ob-field{margin-bottom:1rem;}
+.ob-label{font-size:0.78rem;font-weight:800;color:#555;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.4rem;display:block;}
+.ob-input{width:100%;padding:0.75rem 1rem;border:2px solid #e8ddd0;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;outline:none;transition:border-color 0.2s;background:#fafaf8;color:#1a1a2e;}
+.ob-input:focus{border-color:#D83B2A;background:#fff;}
+
+.kelas-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.5rem;}
+.kelas-btn{background:#f9f4ee;border:2px solid #e8ddd0;border-radius:12px;padding:0.65rem 0.4rem;font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:800;color:#888;cursor:pointer;transition:all 0.18s;text-align:center;}
+.kelas-btn:hover{border-color:#D83B2A;color:#D83B2A;background:#fff5f3;}
+.kelas-btn.selected{border-color:#D83B2A;background:#D83B2A;color:#fff;transform:scale(1.05);}
+
+.ob-btn{width:100%;padding:0.85rem;background:#D83B2A;color:#fff;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 14px rgba(216,59,42,0.35);margin-top:0.5rem;}
+.ob-btn:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(216,59,42,0.45);}
+.ob-btn:active{transform:scale(0.98);}
+.ob-btn:disabled{background:#ccc;box-shadow:none;transform:none;cursor:not-allowed;}
+
+.ob-progress{display:flex;gap:0.4rem;justify-content:center;margin:1rem 0;}
+.ob-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.3);transition:all 0.3s;}
+.ob-dot.active{background:#FFD060;width:24px;border-radius:4px;}
+
+/* ===== MASCOT BUILDER ===== */
+.mascot-preview{display:flex;align-items:center;justify-content:center;margin:0.8rem 0;}
+.mascot-options{display:grid;grid-template-columns:repeat(2,1fr);gap:0.5rem;margin-bottom:0.8rem;}
+.moption-group{background:#f9f4ee;border-radius:14px;padding:0.8rem;}
+.moption-label{font-size:0.7rem;font-weight:800;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.5rem;}
+.moption-row{display:flex;gap:0.4rem;flex-wrap:wrap;}
+.moption-btn{background:#fff;border:2px solid #e8ddd0;border-radius:8px;padding:0.3rem 0.5rem;font-size:1rem;cursor:pointer;transition:all 0.18s;line-height:1;}
+.moption-btn:hover{border-color:#D83B2A;}
+.moption-btn.sel{border-color:#D83B2A;background:#fff5f3;}
+
+/* ===== MAIN APP ===== */
+#app{width:100%;max-width:100%;margin:0 auto;padding:0 0 2rem;display:none;}
+
+/* ===== HERO ===== */
+.hero{background:#D83B2A;padding:0;overflow:visible;position:relative;}
+.hero-top{background:#B02010;padding:0.9rem 1.6rem 1.2rem;display:flex;align-items:center;justify-content:space-between;position:relative;z-index:2;}
+.hero-top::after{content:'';position:absolute;bottom:-18px;left:0;right:0;height:20px;background:#B02010;clip-path:ellipse(55% 100% at 50% 0%);z-index:1;}
+.logo-row{display:flex;align-items:center;gap:0.7rem;}
+.logo-icon{width:48px;height:48px;background:rgba(255,255,255,0.15);border-radius:14px;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,255,255,0.2);}
+.logo-text .name{font-family:'Fredoka One',cursive;font-size:1.6rem;color:#fff;line-height:1;}
+.logo-text .name span{color:#FFD060;}
+.logo-text .sub{font-size:0.62rem;color:rgba(255,255,255,0.75);letter-spacing:2px;font-weight:700;text-transform:uppercase;}
+.hero-score{text-align:right;}
+.score-lbl{font-size:0.62rem;color:rgba(255,255,255,0.75);font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.score-val{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#FFD060;}
+
+.hero-main{padding:1.5rem 1.6rem 0;display:flex;align-items:flex-end;gap:1rem;position:relative;z-index:2;}
+.hero-mascot{flex-shrink:0;position:relative;bottom:-4px;cursor:pointer;transition:transform 0.2s;}
+.hero-mascot:hover{transform:scale(1.05);}
+.hero-text{flex:1;padding-bottom:1.2rem;}
+.hero-greeting{font-size:0.85rem;color:rgba(255,255,255,0.85);font-weight:700;margin-bottom:3px;}
+.hero-title{font-family:'Fredoka One',cursive;font-size:1.9rem;color:#fff;line-height:1.1;margin-bottom:0.4rem;}
+.hero-title span{color:#FFD060;}
+.hero-sub{font-size:0.85rem;color:rgba(255,255,255,0.9);line-height:1.55;}
+.slogan-pill{display:inline-block;background:rgba(255,255,255,0.18);border-radius:20px;padding:4px 14px;font-size:0.72rem;color:rgba(255,255,255,0.95);font-weight:700;margin-top:0.6rem;border:1px solid rgba(255,255,255,0.25);}
+
+/* ===== SCORE BAR ===== */
+.score-bar{background:#fff;border-bottom:2px solid #f0e8d8;padding:0.55rem 1.6rem;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50;box-shadow:0 2px 10px rgba(0,0,0,0.06);}
+.sb-item{text-align:center;}
+.sb-lbl{font-size:0.65rem;color:#aaa;font-weight:700;letter-spacing:1px;text-transform:uppercase;}
+.sb-val{font-family:'Fredoka One',cursive;font-size:1.25rem;color:#D83B2A;}
+.sb-stars{display:flex;gap:4px;justify-content:center;}
+.sb-star{font-size:1rem;transition:transform 0.2s;}
+.sound-btn{background:rgba(216,59,42,0.1);border:2px solid rgba(216,59,42,0.3);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:1.1rem;transition:all 0.2s;flex-shrink:0;}
+.sound-btn:hover{background:rgba(216,59,42,0.2);transform:scale(1.08);}
+
+/* ===== NAV ===== */
+.nav{display:flex;background:#fff;border-bottom:2px solid #f0e8d8;overflow-x:auto;scrollbar-width:none;}
+.nav::-webkit-scrollbar{display:none;}
+.nav-btn{flex:1;min-width:72px;padding:0.65rem 0.4rem;border:none;background:none;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.75rem;font-weight:800;color:#aaa;display:flex;flex-direction:column;align-items:center;gap:3px;border-bottom:3px solid transparent;transition:all 0.2s;}
+.nav-btn .ni{font-size:1.25rem;}
+.nav-btn.active{color:#D83B2A;border-bottom-color:#D83B2A;}
+.nav-btn:hover:not(.active){color:#555;background:#fafafa;}
+
+/* ===== SECTIONS ===== */
+.section{display:none;padding:1.2rem 1.6rem;}
+.section.active{display:block;}
+.sec-head{font-family:'Fredoka One',cursive;font-size:1.25rem;color:#1a1a2e;margin-bottom:0.25rem;}
+.sec-sub{font-size:0.82rem;color:#aaa;margin-bottom:1rem;}
+
+/* ===== SILA CARDS ===== */
+.sila-cards{display:flex;flex-direction:column;gap:0.75rem;}
+.sila-card{background:#fff;border-radius:16px;border:2px solid transparent;padding:0.95rem 1.1rem;cursor:pointer;transition:all 0.25s;display:flex;gap:0.9rem;align-items:flex-start;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.sila-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.09);}
+.sila-num{width:46px;height:46px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1.5rem;color:#fff;flex-shrink:0;}
+.sila-body{flex:1;}
+.sila-name{font-weight:800;font-size:0.97rem;margin-bottom:1px;}
+.sila-latin{font-size:0.75rem;color:#aaa;font-style:italic;margin-bottom:0.3rem;}
+.sila-detail{font-size:0.83rem;line-height:1.6;color:#555;display:none;margin-top:0.4rem;}
+.sila-detail.open{display:block;}
+.nilai-list{list-style:none;margin-top:0.4rem;}
+.nilai-list li{padding:1px 0;font-size:0.79rem;color:#555;}
+.nilai-list li::before{content:'✓ ';color:#2E9E4F;font-weight:700;}
+.chev{font-size:0.75rem;color:#ccc;transition:transform 0.25s;}
+.sila-card.open .chev{transform:rotate(180deg);}
+.info-box{margin-top:1rem;background:#fff;border-radius:14px;padding:1.1rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);font-size:0.83rem;color:#555;line-height:1.6;}
+.info-box strong{color:#1a1a2e;}
+
+/* ===== GAME ===== */
+.btn{background:#D83B2A;color:#fff;border:none;border-radius:12px;padding:0.68rem 1.5rem;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 3px 10px rgba(216,59,42,0.25);}
+.btn:hover{transform:translateY(-1px);box-shadow:0 5px 14px rgba(216,59,42,0.35);}
+.btn:active{transform:scale(0.97);}
+.btn-sec{background:#fff;color:#D83B2A;border:2px solid #D83B2A;box-shadow:none;}
+.btn-sm{padding:0.52rem 1.1rem;font-size:0.84rem;}
+.btn-green{background:#2E9E4F;box-shadow:0 3px 10px rgba(46,158,79,0.3);}
+.btn-green:hover{box-shadow:0 5px 14px rgba(46,158,79,0.4);}
+
+/* ===== GAME TABS ===== */
+.game-tabs{display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+.game-tab-btn{flex:1;min-width:80px;padding:0.55rem 0.5rem;background:#f9f4ee;border:2px solid #e8ddd0;border-radius:12px;font-family:'Nunito',sans-serif;font-size:0.78rem;font-weight:800;color:#888;cursor:pointer;transition:all 0.18s;text-align:center;}
+.game-tab-btn.active{background:#D83B2A;color:#fff;border-color:#D83B2A;}
+
+.game-title{font-family:'Fredoka One',cursive;font-size:1.35rem;color:#1a1a2e;margin-bottom:0.25rem;}
+.game-sub{font-size:0.83rem;color:#aaa;margin-bottom:1rem;text-align:center;}
+.game-info{display:flex;gap:0.8rem;justify-content:center;margin-bottom:1rem;}
+.gstat{background:#fff;border-radius:10px;padding:0.38rem 0.95rem;font-weight:700;font-size:0.83rem;box-shadow:0 2px 6px rgba(0,0,0,0.06);}
+.gstat span{color:#D83B2A;}
+
+/* Memory game */
+.game-board{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:0.9rem;}
+.gc-wrap{perspective:600px;}
+.gc{height:94px;border-radius:12px;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform 0.4s;}
+.gc.flipped{transform:rotateY(180deg);}
+.gc.matched{opacity:0.45;pointer-events:none;}
+.gcf,.gcb{position:absolute;inset:0;border-radius:12px;backface-visibility:hidden;display:flex;align-items:center;justify-content:center;font-size:0.83rem;font-weight:700;padding:0.4rem;text-align:center;line-height:1.3;}
+.gcf{background:linear-gradient(135deg,#D83B2A,#8B1A0A);color:#fff;font-family:'Fredoka One',cursive;font-size:1.65rem;}
+.gcb{transform:rotateY(180deg);color:#fff;}
+#game-msg{font-size:0.97rem;font-weight:700;min-height:1.4rem;color:#2E9E4F;text-align:center;}
+
+/* Jumble */
+.jumble-word{font-family:'Fredoka One',cursive;font-size:2.1rem;color:#1a1a2e;letter-spacing:8px;margin:0.8rem 0;}
+.jumble-hint{font-size:0.82rem;color:#aaa;margin-bottom:1rem;}
+.j-input{font-family:'Nunito',sans-serif;font-size:1rem;font-weight:700;padding:0.65rem 1.1rem;border:2px solid #e0d4c4;border-radius:12px;text-align:center;text-transform:uppercase;letter-spacing:2px;width:100%;max-width:300px;outline:none;transition:border-color 0.2s;background:#fff;color:#1a1a2e;}
+.j-input:focus{border-color:#D83B2A;}
+
+/* ===== BATTLE GAME ===== */
+#game-battle{text-align:center;}
+.battle-lobby{background:#fff;border-radius:20px;padding:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
+.battle-title{font-family:'Fredoka One',cursive;font-size:1.5rem;color:#D83B2A;margin-bottom:0.3rem;}
+.battle-desc{font-size:0.83rem;color:#888;margin-bottom:1rem;line-height:1.5;}
+.room-id-display{background:#fff5f0;border:2px dashed #D83B2A;border-radius:14px;padding:0.8rem 1.2rem;margin-bottom:1rem;}
+.room-id-label{font-size:0.7rem;font-weight:800;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.2rem;}
+.room-id-val{font-family:'Fredoka One',cursive;font-size:2rem;color:#D83B2A;letter-spacing:4px;}
+.room-input{width:100%;padding:0.7rem 1rem;border:2px solid #e8ddd0;border-radius:12px;font-family:'Fredoka One',cursive;font-size:1.5rem;letter-spacing:4px;text-align:center;color:#D83B2A;outline:none;transition:border-color 0.2s;max-width:200px;}
+.room-input:focus{border-color:#D83B2A;}
+.waiting-box{padding:1.5rem;text-align:center;}
+.waiting-spin{font-size:2rem;animation:spin 1.5s linear infinite;display:inline-block;margin-bottom:0.5rem;}
+@keyframes spin{from{transform:rotate(0deg);}to{transform:rotate(360deg);}}
+.players-waiting{display:flex;justify-content:center;gap:1rem;margin-top:1rem;flex-wrap:wrap;}
+.player-slot{background:#f9f4ee;border:2px solid #e8ddd0;border-radius:14px;padding:0.75rem 1rem;min-width:100px;text-align:center;}
+.player-slot.filled{background:#e8f8ee;border-color:#2E9E4F;}
+.player-slot-name{font-weight:800;font-size:0.88rem;color:#1a1a2e;margin-top:0.2rem;}
+.player-slot-class{font-size:0.7rem;color:#aaa;font-weight:700;}
+
+/* Battle arena */
+.battle-arena{display:none;}
+.battle-hud{display:grid;grid-template-columns:1fr auto 1fr;gap:0.5rem;align-items:center;margin-bottom:1rem;}
+.player-hud{background:#fff;border-radius:14px;padding:0.65rem 0.8rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);}
+.player-hud.you{border:2px solid #2E9E4F;}
+.player-hud.enemy{border:2px solid #D83B2A;}
+.phud-name{font-weight:800;font-size:0.8rem;color:#1a1a2e;margin-bottom:0.2rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.phud-hp-bar{height:8px;background:#f0e8d8;border-radius:10px;overflow:hidden;margin-bottom:0.15rem;}
+.phud-hp-fill{height:100%;border-radius:10px;transition:width 0.6s ease;}
+.phud-hp-you .phud-hp-fill{background:linear-gradient(90deg,#2E9E4F,#5CC87A);}
+.phud-hp-enemy .phud-hp-fill{background:linear-gradient(90deg,#D83B2A,#E85040);}
+.phud-hp-val{font-size:0.68rem;font-weight:800;color:#aaa;}
+.vs-badge{font-family:'Fredoka One',cursive;font-size:1.3rem;color:#D83B2A;text-align:center;}
+.turn-indicator{background:#FFD060;color:#1a1a2e;font-weight:800;font-size:0.75rem;border-radius:20px;padding:3px 10px;display:inline-block;margin-top:2px;}
+.turn-indicator.enemy-turn{background:#f5c0b0;color:#D83B2A;}
+
+.battle-question{background:#fff;border-radius:16px;padding:1.1rem;margin-bottom:0.8rem;box-shadow:0 2px 10px rgba(0,0,0,0.06);border:2px solid #f0e8d8;}
+.bq-timer-bar{height:5px;background:#f0e8d8;border-radius:10px;margin-bottom:0.8rem;overflow:hidden;}
+.bq-timer-fill{height:100%;background:linear-gradient(90deg,#2E9E4F,#FFD060,#D83B2A);border-radius:10px;transition:width 0.1s linear;}
+.bq-emoji{font-size:1.6rem;margin-bottom:0.3rem;}
+.bq-text{font-weight:800;font-size:0.95rem;line-height:1.5;color:#1a1a2e;}
+.battle-opts{display:flex;flex-direction:column;gap:0.45rem;margin-bottom:0.8rem;}
+.bopt{background:#f9f4ee;border:2px solid #e8ddd0;border-radius:12px;padding:0.65rem 0.9rem;text-align:left;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.87rem;font-weight:600;transition:all 0.18s;display:flex;align-items:center;gap:0.5rem;}
+.bopt:hover:not(:disabled){border-color:#D83B2A;background:#fff5f3;}
+.bopt:disabled{cursor:default;}
+.bopt.correct{background:#e8f8ee;border-color:#2E9E4F;color:#1a7a3a;}
+.bopt.wrong{background:#fce8e6;border-color:#D83B2A;color:#a02010;}
+.bopt.shield{background:#fff8e0;border-color:#E8A020;color:#7A4A00;}
+.battle-log{background:#f9f4ee;border-radius:10px;padding:0.6rem 0.8rem;font-size:0.78rem;font-weight:700;color:#555;min-height:2rem;line-height:1.5;text-align:center;margin-bottom:0.5rem;}
+.battle-log.attack{color:#D83B2A;}
+.battle-log.heal{color:#2E9E4F;}
+.battle-log.shield{color:#C07820;}
+
+.damage-flash{animation:dmgFlash 0.4s ease;}
+@keyframes dmgFlash{0%{background:#fce8e6;}50%{background:#ff9999;}100%{background:#fff;}}
+.heal-flash{animation:healFlash 0.4s ease;}
+@keyframes healFlash{0%{background:#e8f8ee;}50%{background:#a0f0b0;}100%{background:#fff;}}
+
+.power-meter{background:#f9f4ee;border-radius:10px;padding:0.5rem 0.8rem;display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem;}
+.pm-label{font-size:0.7rem;font-weight:800;color:#aaa;letter-spacing:1px;text-transform:uppercase;white-space:nowrap;}
+.pm-bar{flex:1;height:10px;background:#e8ddd0;border-radius:10px;overflow:hidden;}
+.pm-fill{height:100%;background:linear-gradient(90deg,#D83B2A,#FFD060);border-radius:10px;transition:width 0.4s;}
+.pm-val{font-size:0.8rem;font-weight:800;color:#D83B2A;white-space:nowrap;}
+
+.special-btns{display:flex;gap:0.5rem;margin-bottom:0.5rem;}
+.special-btn{flex:1;padding:0.5rem 0.3rem;border:none;border-radius:10px;font-family:'Nunito',sans-serif;font-size:0.75rem;font-weight:800;cursor:pointer;transition:all 0.2s;}
+.special-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.sbtn-attack{background:#D83B2A;color:#fff;}
+.sbtn-shield{background:#E8A020;color:#fff;}
+.sbtn-heal{background:#2E9E4F;color:#fff;}
+
+.battle-result{display:none;text-align:center;padding:1.5rem 1rem;background:#fff;border-radius:20px;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
+.battle-result.show{display:block;animation:fadeUp 0.5s ease;}
+.result-emoji{font-size:3.5rem;display:block;margin-bottom:0.5rem;}
+.result-title{font-family:'Fredoka One',cursive;font-size:2rem;color:#D83B2A;margin-bottom:0.3rem;}
+.result-msg{font-size:0.9rem;color:#666;margin-bottom:1rem;}
+
+/* ===== QUIZ ===== */
+.qhdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:0.9rem;}
+.qprog-wrap{flex:1;height:7px;background:#f0e8d8;border-radius:10px;margin:0 0.9rem;overflow:hidden;}
+.qprog-bar{height:100%;background:linear-gradient(90deg,#D83B2A,#E8A020);border-radius:10px;transition:width 0.4s;}
+.qctr{font-size:0.75rem;font-weight:700;color:#aaa;white-space:nowrap;}
+.quiz-q{background:#fff;border-radius:16px;padding:1.2rem;margin-bottom:0.8rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.qq-emoji{font-size:1.9rem;display:block;margin-bottom:0.35rem;}
+.qq-text{font-weight:800;font-size:0.97rem;line-height:1.55;}
+.quiz-opts{display:flex;flex-direction:column;gap:0.5rem;}
+.qopt{background:#f9f4ee;border:2px solid #e8ddd0;border-radius:12px;padding:0.68rem 0.95rem;text-align:left;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.88rem;font-weight:600;transition:all 0.18s;display:flex;align-items:center;gap:0.55rem;}
+.qopt:hover:not(:disabled){border-color:#D83B2A;background:#fff5f3;}
+.qopt:disabled{cursor:default;}
+.qopt.correct{background:#e8f8ee;border-color:#2E9E4F;color:#1a7a3a;}
+.qopt.wrong{background:#fce8e6;border-color:#D83B2A;color:#a02010;}
+.opt-l{width:26px;height:26px;border-radius:50%;background:#fff;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:0.73rem;font-weight:800;flex-shrink:0;}
+.qfb{background:#fff;border-radius:12px;padding:0.8rem 1.1rem;margin-bottom:0.8rem;font-size:0.86rem;font-weight:600;display:none;border-left:4px solid;}
+.qfb.show{display:block;}
+.qfb.good{border-color:#2E9E4F;background:#e8f8ee;color:#1a7a3a;}
+.qfb.bad{border-color:#D83B2A;background:#fce8e6;color:#a02010;}
+.qresult{text-align:center;background:#fff;border-radius:16px;padding:1.5rem;box-shadow:0 2px 12px rgba(0,0,0,0.07);display:none;}
+.qresult.show{display:block;}
+.res-emoji{font-size:2.9rem;display:block;margin-bottom:0.4rem;}
+.res-score{font-family:'Fredoka One',cursive;font-size:2.9rem;color:#D83B2A;}
+.res-msg{font-size:0.97rem;font-weight:600;color:#666;margin:0.3rem 0 0.9rem;}
+
+/* ===== NILAI ===== */
+.nilai-tab-row{display:flex;gap:0.5rem;margin-bottom:1rem;flex-wrap:wrap;}
+.nilai-tab{background:#fff;border:2px solid #e8ddd0;border-radius:20px;padding:0.4rem 1rem;font-size:0.78rem;font-weight:800;color:#aaa;cursor:pointer;font-family:'Nunito',sans-serif;transition:all 0.18s;}
+.nilai-tab.active,.nilai-tab:hover{background:#D83B2A;color:#fff;border-color:#D83B2A;}
+.nilai-panel{display:none;}
+.nilai-panel.active{display:block;}
+.nilai-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:0.6rem;margin-bottom:0.8rem;}
+.ncard{background:#fff;border-radius:14px;border:2px solid transparent;padding:0.85rem 0.7rem;text-align:center;cursor:pointer;transition:all 0.22s;box-shadow:0 2px 6px rgba(0,0,0,0.05);}
+.ncard:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,0.08);}
+.ncard.active{transform:translateY(-2px);}
+.ncard-icon{font-size:1.7rem;display:block;margin-bottom:0.2rem;}
+.ncard-title{font-weight:800;font-size:0.82rem;margin-bottom:0.15rem;}
+.ncard-sub{font-size:0.68rem;color:#aaa;line-height:1.3;}
+.ncard-check{font-size:0.75rem;float:right;margin-top:-1.4rem;opacity:0;transition:opacity 0.2s;}
+.ncard.active .ncard-check{opacity:1;}
+.ndetail{background:#fff;border-radius:14px;padding:1rem;margin-bottom:0.8rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);font-size:0.83rem;color:#555;line-height:1.6;min-height:80px;}
+.ndetail-empty{color:#bbb;text-align:center;padding:1rem 0;font-size:0.82rem;}
+.ndetail-contoh{list-style:none;margin-top:0.5rem;}
+.ndetail-contoh li{padding:2px 0;font-size:0.79rem;color:#555;}
+.ndetail-contoh li::before{content:'✓ ';font-weight:700;}
+.nsila-row{background:#fff;border-radius:14px;border:2px solid transparent;padding:0.85rem 1rem;margin-bottom:0.55rem;cursor:pointer;transition:all 0.22s;box-shadow:0 2px 6px rgba(0,0,0,0.04);}
+.nsila-row:hover{box-shadow:0 5px 14px rgba(0,0,0,0.08);}
+.nsila-head{display:flex;align-items:center;gap:0.75rem;}
+.nsila-badge{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka One',cursive;font-size:1rem;color:#fff;flex-shrink:0;}
+.nsila-name{flex:1;font-weight:800;font-size:0.9rem;color:#1a1a2e;}
+.nsila-chev{font-size:0.72rem;color:#ccc;transition:transform 0.22s;}
+.nsila-row.open .nsila-chev{transform:rotate(180deg);}
+.nsila-body{display:none;margin-top:0.75rem;padding-top:0.75rem;border-top:1px solid #f0e8d8;font-size:0.81rem;color:#555;line-height:1.6;}
+.nsila-row.open .nsila-body{display:block;}
+.nsila-pills{display:flex;flex-wrap:wrap;gap:0.4rem;margin-top:0.5rem;}
+.nsila-pill{font-size:0.72rem;padding:3px 10px;border-radius:16px;font-weight:700;border:1.5px solid;}
+.nkuis-card{background:#fff;border-radius:14px;padding:1rem;box-shadow:0 2px 8px rgba(0,0,0,0.05);}
+.nkuis-q{font-weight:800;font-size:0.9rem;color:#1a1a2e;line-height:1.5;margin-bottom:0.8rem;}
+.nkuis-opts{display:flex;flex-direction:column;gap:0.4rem;}
+.nkuis-opt{background:#f9f4ee;border:2px solid #e8ddd0;border-radius:10px;padding:0.6rem 0.85rem;text-align:left;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.84rem;font-weight:600;transition:all 0.16s;display:flex;align-items:center;gap:0.5rem;}
+.nkuis-opt:hover:not(:disabled){border-color:#D83B2A;background:#fff5f3;}
+.nkuis-opt:disabled{cursor:default;}
+.nkuis-opt.correct{background:#e8f8ee;border-color:#2E9E4F;color:#1a7a3a;}
+.nkuis-opt.wrong{background:#fce8e6;border-color:#D83B2A;color:#a02010;}
+.nkuis-lbl{width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid #ddd;display:flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;flex-shrink:0;}
+.nkuis-fb{border-radius:10px;padding:0.65rem 0.9rem;margin-top:0.6rem;font-size:0.83rem;font-weight:600;display:none;border-left:4px solid;}
+.nkuis-fb.show{display:block;}
+.nkuis-fb.good{border-color:#2E9E4F;background:#e8f8ee;color:#1a7a3a;}
+.nkuis-fb.bad{border-color:#D83B2A;background:#fce8e6;color:#a02010;}
+.nkuis-nav{display:flex;align-items:center;justify-content:space-between;margin-top:0.75rem;}
+.match-wrap{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;margin-bottom:0.75rem;}
+.match-col{display:flex;flex-direction:column;gap:0.5rem;}
+.match-item{background:#f9f4ee;border:2px solid #e8ddd0;border-radius:10px;padding:0.55rem 0.75rem;font-size:0.78rem;font-weight:700;cursor:pointer;text-align:center;transition:all 0.18s;line-height:1.4;color:#555;}
+.match-item:hover{border-color:#D83B2A;background:#fff5f3;color:#1a1a2e;}
+.match-item.selected{border-color:#D83B2A;background:#fff5f3;color:#1a1a2e;}
+.match-item.matched-ok{background:#e8f8ee;border-color:#2E9E4F;color:#1a7a3a;pointer-events:none;}
+.match-item.matched-err{background:#fce8e6;border-color:#D83B2A;color:#a02010;}
+.match-msg{text-align:center;font-size:0.82rem;font-weight:700;color:#555;min-height:1.2rem;margin-bottom:0.5rem;}
+
+/* ===== MASKOT SECTION ===== */
+.maskot-builder{background:#fff;border-radius:20px;padding:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:1rem;}
+.mb-title{font-family:'Fredoka One',cursive;font-size:1.1rem;color:#1a1a2e;margin-bottom:0.3rem;}
+.mb-sub{font-size:0.78rem;color:#aaa;margin-bottom:0.9rem;}
+.mb-preview{background:#f9f4ee;border-radius:16px;padding:0.8rem;display:flex;justify-content:center;align-items:center;margin-bottom:0.8rem;min-height:140px;}
+.mb-acc-grid{display:grid;grid-template-columns:1fr 1fr;gap:0.6rem;}
+.mb-group{background:#f9f4ee;border-radius:12px;padding:0.7rem;}
+.mb-group-label{font-size:0.68rem;font-weight:800;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.4rem;}
+.mb-row{display:flex;gap:0.35rem;flex-wrap:wrap;}
+.mb-opt{background:#fff;border:2px solid #e8ddd0;border-radius:8px;padding:0.3rem 0.45rem;font-size:0.95rem;cursor:pointer;transition:all 0.15s;line-height:1;}
+.mb-opt:hover{border-color:#D83B2A;}
+.mb-opt.sel{border-color:#D83B2A;background:#fff5f3;}
+.mb-name-badge{font-family:'Fredoka One',cursive;font-size:0.9rem;color:#D83B2A;text-align:center;margin-top:0.5rem;}
+
+/* ===== COLOR CLASSES ===== */
+.c1b{background:#8B2020;}.c2b{background:#C07820;}.c3b{background:#1E7A1E;}.c4b{background:#1A5EA0;}.c5b{background:#5A5A00;}
+.t1{color:#8B2020;}.t2{color:#C07820;}.t3{color:#1E7A1E;}.t4{color:#1A5EA0;}.t5{color:#5A5A00;}
+
+/* ===== PROFILE BADGE ===== */
+.profile-badge{background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:12px;padding:3px 10px;font-size:0.72rem;color:rgba(255,255,255,0.9);font-weight:700;cursor:pointer;transition:background 0.2s;}
+.profile-badge:hover{background:rgba(255,255,255,0.25);}
+
+/* ===== MISI MODE ===== */
+.misi-header{font-family:'Fredoka One',cursive;font-size:1.4rem;color:#1a1a2e;margin-bottom:0.2rem;}
+.misi-sub{font-size:0.82rem;color:#aaa;margin-bottom:1rem;}
+.misi-path{display:flex;flex-direction:column;gap:0.7rem;}
+.misi-card{border-radius:18px;padding:1rem 1.1rem;border:2px solid transparent;display:flex;align-items:center;gap:0.9rem;cursor:pointer;transition:all 0.22s;position:relative;overflow:hidden;}
+.misi-card.unlocked{background:#fff;border-color:#f0e8d8;box-shadow:0 2px 10px rgba(0,0,0,0.07);}
+.misi-card.unlocked:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(0,0,0,0.1);}
+.misi-card.locked{background:#f5f2ee;border-color:#e0d8cc;opacity:0.7;cursor:not-allowed;}
+.misi-card.completed{background:linear-gradient(135deg,#e8f8ee,#f0fdf4);border-color:#2E9E4F;}
+.misi-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.7rem;flex-shrink:0;}
+.misi-body{flex:1;}
+.misi-title{font-weight:800;font-size:0.97rem;color:#1a1a2e;margin-bottom:2px;}
+.misi-desc{font-size:0.78rem;color:#888;line-height:1.4;margin-bottom:0.35rem;}
+.misi-stars{display:flex;gap:3px;}
+.misi-badge{font-size:0.68rem;font-weight:800;padding:2px 9px;border-radius:20px;position:absolute;top:0.6rem;right:0.7rem;}
+.misi-badge.selesai{background:#e8f8ee;color:#1E7A1E;}
+.misi-badge.terkunci{background:#f0e8d8;color:#aaa;}
+.misi-badge.baru{background:#fff5f0;color:#D83B2A;}
+.misi-connector{width:2px;height:18px;background:#e0d8cc;margin-left:38px;}
+/* Playing state */
+.misi-play-wrap{background:#fff;border-radius:18px;padding:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.08);}
+.misi-play-title{font-family:'Fredoka One',cursive;font-size:1.2rem;color:#D83B2A;margin-bottom:0.2rem;}
+.misi-play-prog{display:flex;align-items:center;gap:0.6rem;margin-bottom:0.8rem;}
+.misi-prog-bar{flex:1;height:7px;background:#f0e8d8;border-radius:10px;overflow:hidden;}
+.misi-prog-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#D83B2A,#E8A020);transition:width 0.4s;}
+.misi-lives{display:flex;gap:3px;}
+.misi-q{background:#f9f4ee;border-radius:14px;padding:1rem;margin-bottom:0.75rem;}
+.misi-q-text{font-weight:800;font-size:0.95rem;color:#1a1a2e;line-height:1.5;margin-bottom:0.6rem;}
+.misi-q-emoji{font-size:1.6rem;display:block;margin-bottom:0.3rem;}
+.misi-opts{display:flex;flex-direction:column;gap:0.45rem;}
+.mopt{background:#fff;border:2px solid #e8ddd0;border-radius:12px;padding:0.65rem 0.95rem;text-align:left;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.87rem;font-weight:600;transition:all 0.18s;display:flex;align-items:center;gap:0.5rem;}
+.mopt:hover:not(:disabled){border-color:#D83B2A;background:#fff5f3;}
+.mopt:disabled{cursor:default;}
+.mopt.correct{background:#e8f8ee;border-color:#2E9E4F;color:#1a7a3a;}
+.mopt.wrong{background:#fce8e6;border-color:#D83B2A;color:#a02010;}
+.misi-fb{border-radius:10px;padding:0.7rem 0.9rem;margin-bottom:0.7rem;font-size:0.84rem;font-weight:600;display:none;border-left:4px solid;}
+.misi-fb.show{display:block;}
+.misi-fb.good{border-color:#2E9E4F;background:#e8f8ee;color:#1a7a3a;}
+.misi-fb.bad{border-color:#D83B2A;background:#fce8e6;color:#a02010;}
+.misi-result{text-align:center;padding:1.5rem 1rem;}
+.misi-result-emoji{font-size:3.5rem;display:block;margin-bottom:0.5rem;}
+.misi-result-title{font-family:'Fredoka One',cursive;font-size:1.9rem;color:#D83B2A;margin-bottom:0.3rem;}
+.misi-result-stars{display:flex;gap:6px;justify-content:center;margin-bottom:0.8rem;}
+.misi-star-big{font-size:2rem;transition:all 0.3s;}
+.misi-result-msg{font-size:0.88rem;color:#666;margin-bottom:1rem;line-height:1.5;}
+.misi-result-btns{display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;}
+.misi-card.locked:active{transform:scale(0.97);}
+.misi-lock-msg{background:#fff3cd;border:1.5px solid #f0c060;border-radius:10px;padding:0.5rem 0.9rem;margin-top:0.5rem;font-size:0.78rem;color:#8a6100;font-weight:700;text-align:center;display:none;}
+@keyframes misiUnlock{0%{transform:scale(0.92);box-shadow:0 0 0 0 rgba(46,158,79,0.5);}50%{transform:scale(1.05);box-shadow:0 0 0 10px rgba(46,158,79,0);}100%{transform:scale(1);box-shadow:0 6px 18px rgba(0,0,0,0.1);}}
+.misi-card.just-unlocked{animation:misiUnlock 0.6s ease forwards;}
+@keyframes starPop{0%{opacity:0;transform:scale(0);}60%{transform:scale(1.3);}100%{opacity:1;transform:scale(1);}}
+.misi-star-big.pop{animation:starPop 0.35s ease forwards;}
+</style>
+</head>
+<body>
+
+<!-- ============ ONBOARDING ============ -->
+<div id="onboarding">
+  <div class="ob-logo">PANCA<span>SERU</span></div>
+  <div class="ob-tagline">Belajar Pancasila Asyik!</div>
+
+  <div class="ob-progress">
+    <div class="ob-dot active" id="dot0"></div>
+    <div class="ob-dot" id="dot1"></div>
+    <div class="ob-dot" id="dot2"></div>
+  </div>
+
+  <!-- Step 0: Nama & Sekolah -->
+  <div class="ob-step active" id="ob-step0">
+    <div class="ob-card">
+      <div style="font-size:2.5rem;text-align:center;margin-bottom:0.5rem;">👋</div>
+      <div class="ob-card-title">Halo, Pejuang Pancasila!</div>
+      <div class="ob-card-sub">Isi data dirimu untuk memulai petualangan!</div>
+      <div class="ob-field">
+        <label class="ob-label">Nama Kamu</label>
+        <input class="ob-input" id="ob-nama" type="text" placeholder="Contoh: Budi Santoso" maxlength="25" oninput="checkStep0()">
+      </div>
+      <div class="ob-field">
+        <label class="ob-label">Nama Sekolahmu</label>
+        <input class="ob-input" id="ob-sekolah" type="text" placeholder="Contoh: SDN Merdeka 01" maxlength="40" oninput="checkStep0()">
+      </div>
+      <button class="ob-btn" id="btn-step0" onclick="goStep(1)" disabled>Lanjut ➡️</button>
+    </div>
+  </div>
+
+  <!-- Step 1: Pilih Kelas -->
+  <div class="ob-step" id="ob-step1">
+    <div class="ob-card">
+      <div style="font-size:2.5rem;text-align:center;margin-bottom:0.5rem;">📚</div>
+      <div class="ob-card-title">Kamu Kelas Berapa?</div>
+      <div class="ob-card-sub">Pilih kelasmu sekarang!</div>
+      <div class="kelas-grid" id="kelas-grid">
+        <button class="kelas-btn" onclick="selectKelas(1,this)">Kelas 1</button>
+        <button class="kelas-btn" onclick="selectKelas(2,this)">Kelas 2</button>
+        <button class="kelas-btn" onclick="selectKelas(3,this)">Kelas 3</button>
+        <button class="kelas-btn" onclick="selectKelas(4,this)">Kelas 4</button>
+        <button class="kelas-btn" onclick="selectKelas(5,this)">Kelas 5</button>
+        <button class="kelas-btn" onclick="selectKelas(6,this)">Kelas 6</button>
+      </div>
+      <button class="ob-btn" id="btn-step1" onclick="goStep(2)" disabled style="margin-top:1rem;">Lanjut ➡️</button>
+    </div>
+  </div>
+
+  <!-- Step 2: Buat Maskot -->
+  <div class="ob-step" id="ob-step2">
+    <div class="ob-card">
+      <div class="ob-card-title">Buat Maskotmu! 🎨</div>
+      <div class="ob-card-sub">Pilih aksesoris untuk Garu-mu!</div>
+
+      <div class="mascot-preview">
+        <svg id="ob-mascot-svg" width="110" height="128" viewBox="0 0 100 118">
+          <!-- Shadow -->
+          <ellipse cx="50" cy="114" rx="24" ry="5" fill="#8B6A00" opacity="0.3"/>
+          <!-- Body -->
+          <ellipse cx="50" cy="50" rx="19" ry="23" id="m-body-dark" fill="#C08000"/>
+          <ellipse cx="50" cy="52" rx="16" ry="20" id="m-body-main" fill="#FFD060"/>
+          <ellipse cx="50" cy="65" rx="16" ry="9" id="m-body-waist" fill="#E8B020"/>
+          <rect x="34" y="68" width="32" height="36" rx="10" id="m-torso" fill="#FFD060"/>
+          <rect x="41" y="71" width="18" height="27" rx="6" id="m-chest" fill="#FFDF80"/>
+          <!-- Wings -->
+          <ellipse cx="26" cy="78" rx="14" ry="6" id="m-wl" fill="#FFD060" transform="rotate(-20,26,78)"/>
+          <ellipse cx="74" cy="78" rx="14" ry="6" id="m-wr" fill="#FFD060" transform="rotate(20,74,78)"/>
+          <!-- Legs -->
+          <rect x="39" y="102" width="9" height="14" rx="4" id="m-ll" fill="#FFD060"/>
+          <rect x="52" y="102" width="9" height="14" rx="4" id="m-lr" fill="#FFD060"/>
+          <ellipse cx="35" cy="116" rx="7" ry="3" id="m-fl" fill="#C08000"/>
+          <ellipse cx="65" cy="116" rx="7" ry="3" id="m-fr" fill="#C08000"/>
+          <!-- Head -->
+          <ellipse cx="50" cy="37" rx="16" ry="17" id="m-head" fill="#FFD060"/>
+          <ellipse cx="50" cy="39" rx="13" ry="13" id="m-face" fill="#FFDF80"/>
+          <!-- Eyes -->
+          <circle cx="44" cy="36" r="4.5" fill="white"/>
+          <circle cx="56" cy="36" r="4.5" fill="white"/>
+          <circle cx="44.8" cy="37" r="2.8" id="m-pupl" fill="#1a1a2e"/>
+          <circle cx="56.8" cy="37" r="2.8" id="m-pupr" fill="#1a1a2e"/>
+          <circle cx="45.5" cy="36" r="1" fill="white"/>
+          <circle cx="57.5" cy="36" r="1" fill="white"/>
+          <!-- Mouth -->
+          <path d="M45 45 Q50 49 55 45" stroke="#C08000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <!-- Beak -->
+          <ellipse cx="50" cy="50" rx="4.5" ry="3" fill="#E8A020"/>
+          <!-- Crown (removable) -->
+          <g id="m-crown">
+            <polygon points="50,42 43,22 50,27 57,22" fill="#D83B2A"/>
+            <polygon points="50,42 41,20 48,25 52,20 59,25 50,42" fill="#E85040"/>
+          </g>
+          <!-- Accessory layer -->
+          <g id="m-hat"></g>
+          <!-- Outfit badge -->
+          <rect id="m-badge" x="43" y="68" width="14" height="9" rx="3" fill="#D83B2A"/>
+          <rect x="45" y="70" width="4" height="5" rx="1" fill="#fff"/>
+          <rect x="51" y="70" width="4" height="5" rx="1" fill="#fff"/>
+          <!-- Extra accessory -->
+          <g id="m-extra"></g>
+        </svg>
+      </div>
+
+      <div class="mb-acc-grid">
+        <div class="mb-group">
+          <div class="mb-group-label">🎩 Topi</div>
+          <div class="mb-row" id="acc-hat">
+            <button class="mb-opt sel" onclick="setAcc('hat','none',this)" title="Tanpa topi">❌</button>
+            <button class="mb-opt" onclick="setAcc('hat','crown',this)" title="Mahkota">👑</button>
+            <button class="mb-opt" onclick="setAcc('hat','cap',this)" title="Topi merah">🧢</button>
+            <button class="mb-opt" onclick="setAcc('hat','grad',this)" title="Toga">🎓</button>
+          </div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-label">👚 Baju</div>
+          <div class="mb-row" id="acc-outfit">
+            <button class="mb-opt sel" onclick="setAcc('outfit','red',this)" title="Merah">❤️</button>
+            <button class="mb-opt" onclick="setAcc('outfit','blue',this)" title="Biru">💙</button>
+            <button class="mb-opt" onclick="setAcc('outfit','green',this)" title="Hijau">💚</button>
+            <button class="mb-opt" onclick="setAcc('outfit','gold',this)" title="Emas">💛</button>
+          </div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-label">🎀 Aksesoris</div>
+          <div class="mb-row" id="acc-extra">
+            <button class="mb-opt sel" onclick="setAcc('extra','none',this)" title="Tanpa aksesoris">❌</button>
+            <button class="mb-opt" onclick="setAcc('extra','star',this)" title="Bintang">⭐</button>
+            <button class="mb-opt" onclick="setAcc('extra','shield',this)" title="Tameng">🛡️</button>
+            <button class="mb-opt" onclick="setAcc('extra','bow',this)" title="Pita">🎀</button>
+          </div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-label">🌈 Warna Tubuh</div>
+          <div class="mb-row" id="acc-color">
+            <button class="mb-opt sel" onclick="setAcc('color','yellow',this)" style="background:#FFD060;border-color:#FFD060;width:28px;height:28px;border-radius:50%;"></button>
+            <button class="mb-opt" onclick="setAcc('color','blue',this)" style="background:#378ADD;border-color:#378ADD;width:28px;height:28px;border-radius:50%;"></button>
+            <button class="mb-opt" onclick="setAcc('color','green',this)" style="background:#2E9E4F;border-color:#2E9E4F;width:28px;height:28px;border-radius:50%;"></button>
+            <button class="mb-opt" onclick="setAcc('color','red',this)" style="background:#D83B2A;border-color:#D83B2A;width:28px;height:28px;border-radius:50%;"></button>
+          </div>
+        </div>
+      </div>
+
+      <button class="ob-btn" onclick="finishOnboarding()" style="margin-top:1rem;">🚀 Mulai Petualangan!</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MAIN APP ============ -->
+<div id="app">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-top">
+      <div class="logo-row">
+        <div class="logo-icon">
+          <svg width="30" height="30" viewBox="0 0 28 28">
+            <ellipse cx="14" cy="12" rx="6" ry="7" fill="#D83B2A"/>
+            <ellipse cx="14" cy="13" rx="5" ry="6" fill="#fff"/>
+            <ellipse cx="7" cy="15" rx="6" ry="3" fill="#fff" transform="rotate(-15,7,15)"/>
+            <ellipse cx="21" cy="15" rx="6" ry="3" fill="#fff" transform="rotate(15,21,15)"/>
+            <ellipse cx="14" cy="9" rx="5" ry="5" fill="#D83B2A"/>
+            <circle cx="12" cy="9" r="1.5" fill="#fff"/>
+            <circle cx="16" cy="9" r="1.5" fill="#fff"/>
+            <circle cx="12.3" cy="9.3" r="0.8" fill="#1a1a2e"/>
+            <circle cx="16.3" cy="9.3" r="0.8" fill="#1a1a2e"/>
+            <ellipse cx="14" cy="12" rx="1.5" ry="1" fill="#FFD060"/>
+            <polygon points="14,6 11,0 14,2 17,0" fill="#FFD060"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <div class="name">PANCA<span>SERU</span></div>
+          <div class="sub">Belajar Pancasila Asyik!</div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;gap:0.5rem;">
+        <div class="profile-badge" onclick="showSection('maskot',document.querySelector('.nav-btn:nth-child(6)'))">
+          <span id="hero-nama-short">Hero</span> · Kls <span id="hero-kelas-disp">-</span>
+        </div>
+        <div class="hero-score">
+          <div class="score-lbl">Bintangku</div>
+          <div class="score-val" id="hs-score">0 ⭐</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-main">
+      <div class="hero-mascot" onclick="showSection('maskot',null)" title="Klik untuk kostumasi!">
+        <svg id="hero-mascot-svg" width="105" height="122" viewBox="0 0 100 118">
+          <ellipse cx="50" cy="114" rx="24" ry="5" fill="#8B6A00" opacity="0.3"/>
+          <ellipse cx="50" cy="50" rx="19" ry="23" id="hm-body-dark" fill="#C08000"/>
+          <ellipse cx="50" cy="52" rx="16" ry="20" id="hm-body-main" fill="#FFD060"/>
+          <ellipse cx="50" cy="65" rx="16" ry="9" id="hm-body-waist" fill="#E8B020"/>
+          <rect x="34" y="68" width="32" height="36" rx="10" id="hm-torso" fill="#FFD060"/>
+          <rect x="41" y="71" width="18" height="27" rx="6" id="hm-chest" fill="#FFDF80"/>
+          <ellipse cx="26" cy="78" rx="14" ry="6" id="hm-wl" fill="#FFD060" transform="rotate(-20,26,78)"/>
+          <ellipse cx="74" cy="78" rx="14" ry="6" id="hm-wr" fill="#FFD060" transform="rotate(20,74,78)"/>
+          <rect x="39" y="102" width="9" height="14" rx="4" id="hm-ll" fill="#FFD060"/>
+          <rect x="52" y="102" width="9" height="14" rx="4" id="hm-lr" fill="#FFD060"/>
+          <ellipse cx="35" cy="116" rx="7" ry="3" id="hm-fl" fill="#C08000"/>
+          <ellipse cx="65" cy="116" rx="7" ry="3" id="hm-fr" fill="#C08000"/>
+          <ellipse cx="50" cy="37" rx="16" ry="17" id="hm-head" fill="#FFD060"/>
+          <ellipse cx="50" cy="39" rx="13" ry="13" id="hm-face" fill="#FFDF80"/>
+          <circle cx="44" cy="36" r="4.5" fill="white"/>
+          <circle cx="56" cy="36" r="4.5" fill="white"/>
+          <circle cx="44.8" cy="37" r="2.8" fill="#1a1a2e"/>
+          <circle cx="56.8" cy="37" r="2.8" fill="#1a1a2e"/>
+          <circle cx="45.5" cy="36" r="1" fill="white"/>
+          <circle cx="57.5" cy="36" r="1" fill="white"/>
+          <path d="M45 45 Q50 49 55 45" stroke="#C08000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="50" cy="50" rx="4.5" ry="3" fill="#E8A020"/>
+          <g id="hm-crown">
+            <polygon points="50,42 43,22 50,27 57,22" fill="#D83B2A"/>
+            <polygon points="50,42 41,20 48,25 52,20 59,25 50,42" fill="#E85040"/>
+          </g>
+          <g id="hm-hat"></g>
+          <rect id="hm-badge" x="43" y="68" width="14" height="9" rx="3" fill="#D83B2A"/>
+          <rect x="45" y="70" width="4" height="5" rx="1" fill="#fff"/>
+          <rect x="51" y="70" width="4" height="5" rx="1" fill="#fff"/>
+          <g id="hm-extra"></g>
+        </svg>
+      </div>
+      <div class="hero-text">
+        <div class="hero-greeting" id="hero-greeting">Halo, Pejuang Pancasila! 👋</div>
+        <div class="hero-title">Selamat datang di <span>PancaSeru!</span></div>
+        <div class="hero-sub" id="hero-sub">Belajar Pancasila seru bareng Garu Si Garuda. Yuk, jadi anak Indonesia yang hebat!</div>
+        <div class="slogan-pill">"Belajar Pancasila, Cinta Indonesia!"</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCORE BAR -->
+  <div class="score-bar">
+    <div class="sb-item">
+      <div class="sb-lbl">Bintang</div>
+      <div class="sb-val" id="total-score">0</div>
+    </div>
+    <div class="sb-stars" id="stars-disp">
+      <span class="sb-star">⭐</span><span class="sb-star">⭐</span><span class="sb-star">⭐</span>
+    </div>
+    <button class="sound-btn" id="sound-toggle" onclick="toggleSound()" title="Nyalakan/Matikan Musik">🔊</button>
+    <div class="sb-item">
+      <div class="sb-lbl">Level</div>
+      <div class="sb-val" id="level-disp">Pemula</div>
+    </div>
+  </div>
+
+  <!-- NAV -->
+  <nav class="nav">
+    <button class="nav-btn active" onclick="showSection('materi',this)"><span class="ni">📚</span>Materi</button>
+    <button class="nav-btn" onclick="showSection('game',this)"><span class="ni">🎮</span>Game</button>
+    <button class="nav-btn" onclick="showSection('quiz',this)"><span class="ni">❓</span>Kuis</button>
+    <button class="nav-btn" onclick="showSection('nilai',this)"><span class="ni">💎</span>Nilai</button>
+    <button class="nav-btn" onclick="showSection('misi',this)"><span class="ni">🎯</span>Misi</button>
+    <button class="nav-btn" onclick="openUlarTangga()"><span class="ni">🎲</span>Ular Tangga</button>
+    <button class="nav-btn" onclick="showSection('maskot',this)"><span class="ni">🦅</span>Maskot</button>
+  </nav>
+
+  <!-- MATERI -->
+  <div id="sec-materi" class="section active">
+    <div class="sec-head">Lima Sila Pancasila</div>
+    <div class="sec-sub">Klik tiap sila untuk tahu lebih banyak!</div>
+    <div class="sila-cards" id="sila-cards"></div>
+    <div class="info-box"><strong>🏛️ Apa itu Pancasila?</strong><br>Pancasila adalah dasar negara Indonesia. <strong>Panca</strong> = Lima, <strong>Sila</strong> = Dasar. Lahir <strong>1 Juni 1945</strong>, ditetapkan <strong>18 Agustus 1945</strong>. Setiap sila dilambangkan dalam Garuda Pancasila!</div>
+  </div>
+
+  <!-- GAME -->
+  <div id="sec-game" class="section">
+    <div class="game-tabs">
+      <button class="game-tab-btn active" onclick="setGame('memory',this)">🃏 Kartu Memori</button>
+      <button class="game-tab-btn" onclick="setGame('jumble',this)">🔤 Kata Acak</button>
+    </div>
+    <div id="game-memory" class="game-area" style="text-align:center;"></div>
+    <div id="game-jumble" style="display:none;text-align:center;"></div>
+  </div>
+
+  <!-- QUIZ -->
+  <div id="sec-quiz" class="section">
+    <div id="quiz-container"></div>
+  </div>
+
+  <!-- NILAI INTERAKTIF -->
+  <div id="sec-nilai" class="section">
+    <div class="sec-head">Nilai-nilai Pancasila</div>
+    <div class="sec-sub">Pilih mode belajar yang kamu suka!</div>
+    <div class="nilai-tab-row">
+      <button class="nilai-tab active" onclick="switchNilai('utama',this)">💡 Nilai Utama</button>
+      <button class="nilai-tab" onclick="switchNilai('sila',this)">📖 Per Sila</button>
+      <button class="nilai-tab" onclick="switchNilai('kuis',this)">🧠 Kuis Nilai</button>
+      <button class="nilai-tab" onclick="switchNilai('cocok',this)">🔗 Cocok-cocokan</button>
+    </div>
+    <div id="npanel-utama" class="nilai-panel active">
+      <div class="nilai-grid" id="nilai-grid"></div>
+      <div class="ndetail" id="ndetail-box"><div class="ndetail-empty">Klik salah satu nilai di atas!</div></div>
+    </div>
+    <div id="npanel-sila" class="nilai-panel"><div id="nsila-list"></div></div>
+    <div id="npanel-kuis" class="nilai-panel">
+      <div class="nkuis-card" id="nkuis-wrap"></div>
+      <div class="nkuis-nav">
+        <span style="font-size:0.78rem;font-weight:700;color:#aaa;" id="nkuis-prog">Soal 1 / 6</span>
+        <span style="font-size:0.78rem;font-weight:700;color:#D83B2A;" id="nkuis-score">Nilai: 0</span>
+      </div>
+    </div>
+    <div id="npanel-cocok" class="nilai-panel">
+      <div style="font-size:0.8rem;color:#aaa;margin-bottom:0.75rem;">Pilih satu sila lalu satu nilai yang cocok!</div>
+      <div class="match-wrap">
+        <div class="match-col" id="mcol-sila"></div>
+        <div class="match-col" id="mcol-nilai"></div>
+      </div>
+      <div class="match-msg" id="match-msg"></div>
+      <div style="text-align:right;"><button class="btn btn-sm btn-sec" onclick="resetMatch()">🔄 Ulangi</button></div>
+    </div>
+  </div>
+
+  <!-- ===== MISI MODE ===== -->
+  <div id="sec-misi" class="section">
+    <div id="game-misi">
+      <div id="misi-lobby"></div>
+      <div id="misi-play" style="display:none;"></div>
+    </div>
+  </div>
+
+  <!-- MASKOT -->
+  <div id="sec-maskot" class="section">
+    <div class="sec-head">Maskotmu 🦅</div>
+    <div class="sec-sub">Kostumasi Garu Si Garuda milikmu!</div>
+
+    <div class="maskot-builder">
+      <div class="mb-title">Garu Si Garuda</div>
+      <div class="mb-sub">Klik aksesoris untuk berganti tampilan</div>
+      <div class="mb-preview">
+        <svg id="sec-mascot-svg" width="130" height="152" viewBox="0 0 100 118">
+          <ellipse cx="50" cy="114" rx="24" ry="5" fill="#8B6A00" opacity="0.3"/>
+          <ellipse cx="50" cy="50" rx="19" ry="23" id="sm-body-dark" fill="#C08000"/>
+          <ellipse cx="50" cy="52" rx="16" ry="20" id="sm-body-main" fill="#FFD060"/>
+          <ellipse cx="50" cy="65" rx="16" ry="9" id="sm-body-waist" fill="#E8B020"/>
+          <rect x="34" y="68" width="32" height="36" rx="10" id="sm-torso" fill="#FFD060"/>
+          <rect x="41" y="71" width="18" height="27" rx="6" id="sm-chest" fill="#FFDF80"/>
+          <ellipse cx="26" cy="78" rx="14" ry="6" id="sm-wl" fill="#FFD060" transform="rotate(-20,26,78)"/>
+          <ellipse cx="74" cy="78" rx="14" ry="6" id="sm-wr" fill="#FFD060" transform="rotate(20,74,78)"/>
+          <rect x="39" y="102" width="9" height="14" rx="4" id="sm-ll" fill="#FFD060"/>
+          <rect x="52" y="102" width="9" height="14" rx="4" id="sm-lr" fill="#FFD060"/>
+          <ellipse cx="35" cy="116" rx="7" ry="3" id="sm-fl" fill="#C08000"/>
+          <ellipse cx="65" cy="116" rx="7" ry="3" id="sm-fr" fill="#C08000"/>
+          <ellipse cx="50" cy="37" rx="16" ry="17" id="sm-head" fill="#FFD060"/>
+          <ellipse cx="50" cy="39" rx="13" ry="13" id="sm-face" fill="#FFDF80"/>
+          <circle cx="44" cy="36" r="4.5" fill="white"/>
+          <circle cx="56" cy="36" r="4.5" fill="white"/>
+          <circle cx="44.8" cy="37" r="2.8" fill="#1a1a2e"/>
+          <circle cx="56.8" cy="37" r="2.8" fill="#1a1a2e"/>
+          <circle cx="45.5" cy="36" r="1" fill="white"/>
+          <circle cx="57.5" cy="36" r="1" fill="white"/>
+          <path d="M45 45 Q50 49 55 45" stroke="#C08000" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+          <ellipse cx="50" cy="50" rx="4.5" ry="3" fill="#E8A020"/>
+          <g id="sm-crown">
+            <polygon points="50,42 43,22 50,27 57,22" fill="#D83B2A"/>
+            <polygon points="50,42 41,20 48,25 52,20 59,25 50,42" fill="#E85040"/>
+          </g>
+          <g id="sm-hat"></g>
+          <rect id="sm-badge" x="43" y="68" width="14" height="9" rx="3" fill="#D83B2A"/>
+          <rect x="45" y="70" width="4" height="5" rx="1" fill="#fff"/>
+          <rect x="51" y="70" width="4" height="5" rx="1" fill="#fff"/>
+          <g id="sm-extra"></g>
+        </svg>
+      </div>
+      <div class="mb-name-badge" id="sec-mascot-name">Garu</div>
+
+      <div class="mb-acc-grid">
+        <div class="mb-group">
+          <div class="mb-group-label">🎩 Topi</div>
+          <div class="mb-row" id="sec-acc-hat">
+            <button class="mb-opt" onclick="setAcc2('hat','none',this)" title="Tanpa topi">❌</button>
+            <button class="mb-opt" onclick="setAcc2('hat','crown',this)" title="Mahkota">👑</button>
+            <button class="mb-opt" onclick="setAcc2('hat','cap',this)" title="Topi merah">🧢</button>
+            <button class="mb-opt" onclick="setAcc2('hat','grad',this)" title="Toga">🎓</button>
+          </div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-label">👚 Baju</div>
+          <div class="mb-row" id="sec-acc-outfit">
+            <button class="mb-opt" onclick="setAcc2('outfit','red',this)">❤️</button>
+            <button class="mb-opt" onclick="setAcc2('outfit','blue',this)">💙</button>
+            <button class="mb-opt" onclick="setAcc2('outfit','green',this)">💚</button>
+            <button class="mb-opt" onclick="setAcc2('outfit','gold',this)">💛</button>
+          </div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-label">🎀 Aksesoris</div>
+          <div class="mb-row" id="sec-acc-extra">
+            <button class="mb-opt" onclick="setAcc2('extra','none',this)">❌</button>
+            <button class="mb-opt" onclick="setAcc2('extra','star',this)">⭐</button>
+            <button class="mb-opt" onclick="setAcc2('extra','shield',this)">🛡️</button>
+            <button class="mb-opt" onclick="setAcc2('extra','bow',this)">🎀</button>
+          </div>
+        </div>
+        <div class="mb-group">
+          <div class="mb-group-label">🌈 Warna Tubuh</div>
+          <div class="mb-row" id="sec-acc-color">
+            <button class="mb-opt" onclick="setAcc2('color','yellow',this)" style="background:#FFD060;border-color:#FFD060;width:28px;height:28px;border-radius:50%;"></button>
+            <button class="mb-opt" onclick="setAcc2('color','blue',this)" style="background:#378ADD;border-color:#378ADD;width:28px;height:28px;border-radius:50%;"></button>
+            <button class="mb-opt" onclick="setAcc2('color','green',this)" style="background:#2E9E4F;border-color:#2E9E4F;width:28px;height:28px;border-radius:50%;"></button>
+            <button class="mb-opt" onclick="setAcc2('color','red',this)" style="background:#D83B2A;border-color:#D83B2A;width:28px;height:28px;border-radius:50%;"></button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mascot info list -->
+    <div style="background:#fff;border-radius:16px;border:2px solid #f5c0b0;padding:1.2rem;margin-bottom:0.8rem;">
+      <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:#D83B2A;margin-bottom:0.4rem;">Garu Si Garuda ⭐</div>
+      <div style="font-size:0.82rem;color:#555;line-height:1.6;">Garuda kecil yang ceria, pintar, dan penuh semangat! Garu selalu siap membantu kamu belajar Pancasila. Bulu emasnya melambangkan kebanggaan sebagai simbol negara Indonesia.</div>
+      <div style="margin-top:0.5rem;display:flex;gap:0.4rem;flex-wrap:wrap;">
+        <span style="background:#fff5f0;color:#D83B2A;border:1px solid #f5c0b0;border-radius:20px;padding:2px 10px;font-size:0.7rem;font-weight:700;">Ceria</span>
+        <span style="background:#fff8e0;color:#B07010;border:1px solid #f5d890;border-radius:20px;padding:2px 10px;font-size:0.7rem;font-weight:700;">Pintar</span>
+        <span style="background:#e8f8ee;color:#1E7A1E;border:1px solid #a0d8b0;border-radius:20px;padding:2px 10px;font-size:0.7rem;font-weight:700;">Patriotis</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER CREDITS -->
+  <div style="margin:1.5rem 1.6rem 0.5rem;background:#fff;border-radius:16px;border:2px solid #f0e8d8;padding:1rem 1.2rem;text-align:center;box-shadow:0 2px 8px rgba(0,0,0,0.04);">
+    <div style="font-size:0.68rem;font-weight:800;color:#aaa;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:0.4rem;">Dibuat oleh</div>
+    <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:#D83B2A;margin-bottom:0.15rem;">Siska Tiara</div>
+    <div style="font-size:0.78rem;font-weight:700;color:#555;margin-bottom:0.1rem;">NIM: 2503294</div>
+    <div style="font-size:0.75rem;color:#aaa;margin-bottom:0.1rem;">Pendidikan Multimedia</div>
+    <div style="font-size:0.75rem;color:#aaa;">Universitas Pendidikan Indonesia</div>
+  </div>
+
+</div><!-- end #app -->
+
+<!-- ============ ULAR TANGGA OVERLAY ============ -->
+<div id="ut-overlay" style="display:none;position:fixed;inset:0;z-index:900;background:#FFF8F0;overflow-y:auto;">
+  <div id="ut-setup" style="max-width:440px;margin:0 auto;padding:1.2rem;">
+    <div style="display:flex;align-items:center;gap:0.8rem;margin-bottom:1rem;">
+      <button onclick="closeUlarTangga()" style="background:#f0e8d8;border:none;border-radius:50%;width:38px;height:38px;font-size:1.1rem;cursor:pointer;flex-shrink:0;">✕</button>
+      <div>
+        <div style="font-family:'Fredoka One',cursive;font-size:1.3rem;color:#D83B2A;">🎲 Ular Tangga Pancasila</div>
+        <div style="font-size:0.75rem;color:#aaa;font-weight:700;">Multiplayer 2–4 Pemain</div>
+      </div>
+    </div>
+    <!-- Player Count -->
+    <div style="background:#fff;border-radius:18px;padding:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:1rem;">
+      <div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#1a1a2e;margin-bottom:0.6rem;">Berapa pemain?</div>
+      <div style="display:flex;gap:0.5rem;">
+        <button class="ut-count-btn active" onclick="setUtCount(2,this)" style="flex:1;padding:0.65rem;border:2px solid #D83B2A;background:#D83B2A;color:#fff;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;">2 Pemain</button>
+        <button class="ut-count-btn" onclick="setUtCount(3,this)" style="flex:1;padding:0.65rem;border:2px solid #e8ddd0;background:#f9f4ee;color:#888;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;">3 Pemain</button>
+        <button class="ut-count-btn" onclick="setUtCount(4,this)" style="flex:1;padding:0.65rem;border:2px solid #e8ddd0;background:#f9f4ee;color:#888;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;font-size:0.9rem;cursor:pointer;">4 Pemain</button>
+      </div>
+    </div>
+    <!-- Player Names -->
+    <div id="ut-names" style="background:#fff;border-radius:18px;padding:1.2rem;box-shadow:0 2px 12px rgba(0,0,0,0.07);margin-bottom:1rem;"></div>
+    <button onclick="startUlarTangga()" style="width:100%;padding:0.9rem;background:#D83B2A;color:#fff;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(216,59,42,0.3);">🎲 Mulai Main!</button>
+  </div>
+
+  <!-- Game Board -->
+  <div id="ut-game" style="display:none;padding:0.8rem;max-width:520px;margin:0 auto;">
+    <!-- Top bar -->
+    <div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.8rem;">
+      <button onclick="closeUlarTangga()" style="background:#f0e8d8;border:none;border-radius:50%;width:36px;height:36px;font-size:1rem;cursor:pointer;flex-shrink:0;">✕</button>
+      <div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:#D83B2A;flex:1;">🎲 Ular Tangga Pancasila</div>
+      <button onclick="resetUlarTangga()" style="background:#f0e8d8;border:none;border-radius:10px;padding:0.3rem 0.7rem;font-size:0.78rem;font-weight:800;color:#888;cursor:pointer;">🔄 Reset</button>
+    </div>
+    <!-- Turn info -->
+    <div id="ut-turn-info" style="background:#fff;border-radius:14px;padding:0.75rem 1rem;margin-bottom:0.75rem;box-shadow:0 2px 8px rgba(0,0,0,0.06);display:flex;align-items:center;justify-content:space-between;"></div>
+    <!-- Board canvas wrapper -->
+    <div style="background:#fff;border-radius:18px;padding:0.6rem;box-shadow:0 2px 12px rgba(0,0,0,0.08);margin-bottom:0.75rem;overflow:hidden;">
+      <canvas id="ut-canvas" style="width:100%;display:block;border-radius:12px;"></canvas>
+    </div>
+    <!-- Players status -->
+    <div id="ut-players-status" style="display:grid;gap:0.5rem;margin-bottom:0.75rem;"></div>
+    <!-- Dice + action -->
+    <div style="text-align:center;margin-bottom:0.75rem;">
+      <div id="ut-dice-display" style="font-size:4rem;line-height:1;margin-bottom:0.5rem;">🎲</div>
+      <button id="ut-roll-btn" onclick="rollDice()" style="padding:0.8rem 2.5rem;background:#D83B2A;color:#fff;border:none;border-radius:14px;font-family:'Nunito',sans-serif;font-size:1rem;font-weight:800;cursor:pointer;box-shadow:0 4px 14px rgba(216,59,42,0.3);">🎲 Lempar Dadu!</button>
+    </div>
+    <!-- Log -->
+    <div id="ut-log" style="background:#fff;border-radius:14px;padding:0.8rem 1rem;font-size:0.82rem;font-weight:700;color:#555;min-height:40px;box-shadow:0 2px 6px rgba(0,0,0,0.05);line-height:1.6;"></div>
+  </div>
+
+  <!-- Question overlay inside ular tangga -->
+  <div id="ut-question-panel" style="display:none;position:fixed;inset:0;z-index:950;background:rgba(0,0,0,0.55);display:flex;align-items:center;justify-content:center;padding:1rem;">
+    <div style="background:#fff;border-radius:22px;padding:1.4rem;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:fadeUp 0.3s ease;">
+      <div id="ut-q-label" style="font-size:0.7rem;font-weight:800;color:#aaa;letter-spacing:1px;text-transform:uppercase;margin-bottom:0.3rem;"></div>
+      <div id="ut-q-emoji" style="font-size:1.8rem;margin-bottom:0.3rem;"></div>
+      <div id="ut-q-text" style="font-weight:800;font-size:0.97rem;color:#1a1a2e;line-height:1.5;margin-bottom:0.8rem;"></div>
+      <div id="ut-q-opts" style="display:flex;flex-direction:column;gap:0.45rem;margin-bottom:0.8rem;"></div>
+      <div id="ut-q-fb" style="display:none;border-radius:10px;padding:0.65rem 0.9rem;font-size:0.84rem;font-weight:600;border-left:4px solid;margin-bottom:0.6rem;"></div>
+      <button id="ut-q-next" onclick="utQuestionNext()" style="display:none;width:100%;padding:0.7rem;background:#D83B2A;color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:800;cursor:pointer;">Lanjutkan ➡️</button>
+    </div>
+  </div>
+
+  <!-- Winner overlay -->
+  <div id="ut-winner-panel" style="display:none;position:fixed;inset:0;z-index:960;background:rgba(0,0,0,0.6);display:flex;align-items:center;justify-content:center;padding:1rem;">
+    <div style="background:#fff;border-radius:22px;padding:2rem 1.5rem;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,0.3);animation:fadeUp 0.4s ease;">
+      <div style="font-size:4rem;margin-bottom:0.5rem;">🏆</div>
+      <div id="ut-winner-name" style="font-family:'Fredoka One',cursive;font-size:2rem;color:#D83B2A;margin-bottom:0.3rem;"></div>
+      <div id="ut-winner-msg" style="font-size:0.9rem;color:#666;margin-bottom:1.2rem;line-height:1.5;"></div>
+      <div style="display:flex;gap:0.6rem;justify-content:center;flex-wrap:wrap;">
+        <button onclick="resetUlarTangga()" style="padding:0.75rem 1.5rem;background:#D83B2A;color:#fff;border:none;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;">🔄 Main Lagi</button>
+        <button onclick="closeUlarTangga()" style="padding:0.75rem 1.5rem;background:#fff;color:#D83B2A;border:2px solid #D83B2A;border-radius:12px;font-family:'Nunito',sans-serif;font-weight:800;cursor:pointer;">🏠 Menu</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ============================================
+   ONBOARDING
+   ============================================ */
+let playerData = { nama:'', sekolah:'', kelas:0 };
+let mascotCfg = { hat:'none', outfit:'red', extra:'none', color:'yellow' };
+
+const bodyColors = {
+  yellow:{ main:'#FFD060', dark:'#C08000', waist:'#E8B020', face:'#FFDF80' },
+  blue:  { main:'#378ADD', dark:'#1A5EA0', waist:'#2A7ACC', face:'#5AAAE8' },
+  green: { main:'#2E9E4F', dark:'#1E7A1E', waist:'#28904A', face:'#50BE70' },
+  red:   { main:'#E85040', dark:'#B02010', waist:'#D84030', face:'#F07060' }
+};
+const outfitColors = { red:'#D83B2A', blue:'#1A5EA0', green:'#1E7A1E', gold:'#C07820' };
+
+function checkStep0(){
+  const n = document.getElementById('ob-nama').value.trim();
+  const s = document.getElementById('ob-sekolah').value.trim();
+  document.getElementById('btn-step0').disabled = !(n.length>1 && s.length>1);
+}
+
+let selectedKelas = 0;
+function selectKelas(k, el){
+  selectedKelas = k;
+  document.querySelectorAll('.kelas-btn').forEach(b=>b.classList.remove('selected'));
+  el.classList.add('selected');
+  document.getElementById('btn-step1').disabled = false;
+}
+
+function goStep(n){
+  if(n===1){
+    playerData.nama = document.getElementById('ob-nama').value.trim();
+    playerData.sekolah = document.getElementById('ob-sekolah').value.trim();
+  }
+  if(n===2){
+    playerData.kelas = selectedKelas;
+  }
+  document.querySelectorAll('.ob-step').forEach((s,i)=>{
+    s.classList.toggle('active', i===n);
+  });
+  [0,1,2].forEach(i=>{
+    document.getElementById('dot'+i).classList.toggle('active', i===n);
+  });
+}
+
+function setAcc(type, val, el){
+  mascotCfg[type] = val;
+  const grp = el.closest('.mb-row, .mb-opt')?.parentElement || el.parentElement;
+  grp.querySelectorAll('.mb-opt').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  applyMascot('ob-mascot-svg','m-');
+  applyMascot('hero-mascot-svg','hm-');
+  applyMascot('sec-mascot-svg','sm-');
+}
+
+function setAcc2(type, val, el){
+  // Same cfg, same function, just from sec page
+  mascotCfg[type] = val;
+  const grp = el.parentElement;
+  grp.querySelectorAll('.mb-opt').forEach(b=>b.classList.remove('sel'));
+  el.classList.add('sel');
+  // Sync onboarding buttons too
+  syncSecButtons();
+  applyMascot('ob-mascot-svg','m-');
+  applyMascot('hero-mascot-svg','hm-');
+  applyMascot('sec-mascot-svg','sm-');
+}
+
+function syncSecButtons(){
+  ['hat','outfit','extra'].forEach(type=>{
+    const secGrp = document.getElementById('sec-acc-'+type);
+    if(!secGrp) return;
+    secGrp.querySelectorAll('.mb-opt').forEach(b=>{
+      b.classList.toggle('sel', b.getAttribute('onclick')?.includes("'"+mascotCfg[type]+"'"));
+    });
+  });
+}
+
+function applyMascot(svgId, prefix){
+  const c = bodyColors[mascotCfg.color] || bodyColors.yellow;
+  const parts = ['body-main','body-dark','body-waist','torso','wl','wr','ll','lr','head'];
+  ['body-main','torso','wl','wr','ll','lr','head'].forEach(p=>{
+    const el = document.getElementById(prefix+p);
+    if(el) el.setAttribute('fill', c.main);
+  });
+  const darkEls = ['body-dark','fl','fr'];
+  darkEls.forEach(p=>{ const el=document.getElementById(prefix+p); if(el) el.setAttribute('fill',c.dark); });
+  ['body-waist'].forEach(p=>{ const el=document.getElementById(prefix+p); if(el) el.setAttribute('fill',c.waist); });
+  ['chest','face'].forEach(p=>{ const el=document.getElementById(prefix+p); if(el) el.setAttribute('fill',c.face); });
+
+  // Outfit badge
+  const badge = document.getElementById(prefix+'badge');
+  if(badge) badge.setAttribute('fill', outfitColors[mascotCfg.outfit] || '#D83B2A');
+
+  // Hat
+  const hatEl = document.getElementById(prefix+'hat');
+  const crownEl = document.getElementById(prefix+'crown');
+  if(hatEl){
+    hatEl.innerHTML = '';
+    if(crownEl) crownEl.style.display = 'block';
+    if(mascotCfg.hat === 'crown'){
+      crownEl && (crownEl.style.display = 'none');
+      hatEl.innerHTML = `<polygon points="50,30 42,12 50,18 58,12" fill="#FFD060"/>
+        <polygon points="50,30 39,10 47,16 50,10 53,16 61,10" fill="#FFD060"/>
+        <rect x="36" y="28" width="28" height="5" rx="2.5" fill="#FFD060"/>
+        <circle cx="50" cy="12" r="3" fill="#D83B2A"/>`;
+    } else if(mascotCfg.hat === 'cap'){
+      crownEl && (crownEl.style.display = 'none');
+      hatEl.innerHTML = `<ellipse cx="50" cy="28" rx="18" ry="5" fill="#D83B2A"/>
+        <rect x="36" y="20" width="28" height="10" rx="5" fill="#D83B2A"/>
+        <rect x="30" y="27" width="12" height="4" rx="2" fill="#B02010"/>`;
+    } else if(mascotCfg.hat === 'grad'){
+      crownEl && (crownEl.style.display = 'none');
+      hatEl.innerHTML = `<rect x="34" y="20" width="32" height="8" rx="2" fill="#1a1a2e"/>
+        <rect x="42" y="16" width="16" height="6" rx="2" fill="#1a1a2e"/>
+        <line x1="58" y1="16" x2="68" y2="22" stroke="#FFD060" stroke-width="2"/>
+        <circle cx="68" cy="22" r="3" fill="#FFD060"/>`;
+    }
+  }
+
+  // Extra
+  const extraEl = document.getElementById(prefix+'extra');
+  if(extraEl){
+    extraEl.innerHTML = '';
+    if(mascotCfg.extra === 'star'){
+      extraEl.innerHTML = `<text x="68" y="34" font-size="14" text-anchor="middle">⭐</text>`;
+    } else if(mascotCfg.extra === 'shield'){
+      extraEl.innerHTML = `<path d="M20,70 L26,66 L32,70 L32,80 Q26,85 20,80 Z" fill="#E8A020" opacity="0.9"/>
+        <text x="26" y="78" font-size="7" text-anchor="middle" fill="#fff" font-weight="bold">🛡</text>`;
+    } else if(mascotCfg.extra === 'bow'){
+      extraEl.innerHTML = `<ellipse cx="50" cy="22" rx="8" ry="5" fill="#ff69b4" transform="rotate(-15,50,22)"/>
+        <ellipse cx="62" cy="20" rx="8" ry="5" fill="#ff69b4" transform="rotate(15,62,20)"/>
+        <circle cx="56" cy="21" r="3" fill="#ff1493"/>`;
+    }
+  }
+}
+
+function finishOnboarding(){
+  document.getElementById('onboarding').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  // Update hero text
+  document.getElementById('hero-greeting').textContent = 'Halo, ' + playerData.nama + '! 👋';
+  document.getElementById('hero-sub').textContent = 'Semangat belajar Pancasila, Kelas '+playerData.kelas+' '+playerData.sekolah+'!';
+  document.getElementById('hero-nama-short').textContent = playerData.nama.split(' ')[0];
+  document.getElementById('hero-kelas-disp').textContent = playerData.kelas;
+  // Sync sec mascot buttons
+  syncSecButtons();
+  applyMascot('hero-mascot-svg','hm-');
+  applyMascot('sec-mascot-svg','sm-');
+  // Initialize sec mascot sel
+  document.querySelectorAll('#sec-acc-hat .mb-opt').forEach(b=>{
+    b.classList.toggle('sel', b.getAttribute('onclick')?.includes("'none'"));
+  });
+  document.querySelectorAll('#sec-acc-outfit .mb-opt').forEach(b=>{
+    b.classList.toggle('sel', b.getAttribute('onclick')?.includes("'red'"));
+  });
+}
+
+/* ============================================
+   SOUND
+   ============================================ */
+let audioCtx=null,soundOn=false,oscillators=[],gainNode=null;
+const melody=[261.63,293.66,329.63,349.23,392,440,493.88,523.25,493.88,440,392,349.23,329.63,293.66,261.63,329.63,349.23,392,440,392,349.23,329.63,261.63,329.63,392,523.25,392,329.63];
+const durations=[0.4,0.4,0.4,0.4,0.4,0.4,0.4,0.8,0.4,0.4,0.4,0.4,0.4,0.4,0.8,0.3,0.3,0.3,0.6,0.3,0.3,0.6,0.3,0.3,0.3,0.6,0.3,0.3];
+function initAudio(){if(audioCtx)return;audioCtx=new(window.AudioContext||window.webkitAudioContext)();gainNode=audioCtx.createGain();gainNode.gain.setValueAtTime(0.04,audioCtx.currentTime);gainNode.connect(audioCtx.destination);}
+function scheduleMelody(){if(!soundOn)return;const now=audioCtx.currentTime;let t=now+0.05;for(let i=0;i<melody.length;i++){const osc=audioCtx.createOscillator();const g=audioCtx.createGain();osc.type='sine';osc.frequency.setValueAtTime(melody[i],t);g.gain.setValueAtTime(0,t);g.gain.linearRampToValueAtTime(0.06,t+0.03);g.gain.linearRampToValueAtTime(0,t+durations[i]-0.02);osc.connect(g);g.connect(gainNode);osc.start(t);osc.stop(t+durations[i]);oscillators.push(osc);t+=durations[i];}const total=durations.reduce((a,b)=>a+b,0);setTimeout(()=>{if(soundOn)scheduleMelody();},total*1000);}
+function toggleSound(){const btn=document.getElementById('sound-toggle');if(!soundOn){initAudio();if(audioCtx.state==='suspended')audioCtx.resume();soundOn=true;btn.textContent='🔊';scheduleMelody();}else{soundOn=false;btn.textContent='🔇';oscillators.forEach(o=>{try{o.stop();}catch(e){}});oscillators=[];}}
+
+/* ============================================
+   SCORE
+   ============================================ */
+let totalScore=0;
+function addScore(pts){
+  totalScore+=pts;
+  document.getElementById('total-score').textContent=totalScore;
+  document.getElementById('hs-score').textContent=totalScore+' ⭐';
+  const lvl=totalScore<20?'Pemula':totalScore<50?'Pelajar':totalScore<100?'Pahlawan':'Pancasilis!';
+  document.getElementById('level-disp').textContent=lvl;
+  document.querySelectorAll('.sb-star').forEach((s,i)=>{
+    setTimeout(()=>{s.style.transform='scale(1.5)';setTimeout(()=>s.style.transform='',200);},i*80);
+  });
+}
+
+/* ============================================
+   NAVIGATION
+   ============================================ */
+function showSection(id, btn){
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('sec-'+id).classList.add('active');
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+}
+
+/* ============================================
+   DATA
+   ============================================ */
+const silaData=[
+  {num:1,name:"Ketuhanan Yang Maha Esa",latin:"Belief in One God",sym:"⭐",cb:"c1b",tc:"t1",bc:"#8B2020",desc:"Sila pertama mengajarkan bahwa bangsa Indonesia percaya kepada Tuhan Yang Maha Esa. Kita harus menjalankan ibadah sesuai agama masing-masing, serta saling menghormati pemeluk agama lain.",nilai:["Beriman kepada Tuhan","Rajin beribadah","Menghormati agama lain","Toleransi antaragama","Tidak memaksakan agama"]},
+  {num:2,name:"Kemanusiaan yang Adil dan Beradab",latin:"Just and Civilized Humanity",sym:"⛓️",cb:"c2b",tc:"t2",bc:"#C07820",desc:"Sila kedua mengajarkan bahwa semua manusia memiliki derajat yang sama. Kita harus memperlakukan orang lain dengan adil, tidak membeda-bedakan suku, ras, atau agama.",nilai:["Menghargai sesama manusia","Bersikap adil kepada semua","Menolong yang membutuhkan","Tidak semena-mena","Menjunjung kebenaran"]},
+  {num:3,name:"Persatuan Indonesia",latin:"Unity of Indonesia",sym:"🌳",cb:"c3b",tc:"t3",bc:"#1E7A1E",desc:"Sila ketiga mengajarkan pentingnya persatuan bangsa. Meskipun berbeda suku, bahasa, dan budaya, kita tetap satu bangsa Indonesia. Bhinneka Tunggal Ika!",nilai:["Cinta tanah air","Mengutamakan kepentingan bangsa","Bangga menjadi orang Indonesia","Menjaga persatuan","Menghargai keberagaman"]},
+  {num:4,name:"Kerakyatan yang Dipimpin oleh Hikmat Kebijaksanaan",latin:"Democracy Guided by Wisdom",sym:"🐂",cb:"c4b",tc:"t4",bc:"#1A5EA0",desc:"Sila keempat mengajarkan bahwa keputusan diambil bersama melalui musyawarah. Kita harus mendengarkan pendapat orang lain dan menerima keputusan dengan lapang dada.",nilai:["Musyawarah untuk mufakat","Menghargai pendapat orang lain","Mengutamakan kepentingan bersama","Bertanggung jawab","Tidak memaksakan kehendak"]},
+  {num:5,name:"Keadilan Sosial bagi Seluruh Rakyat Indonesia",latin:"Social Justice for All",sym:"🌾",cb:"c5b",tc:"t5",bc:"#5A5A00",desc:"Sila kelima mengajarkan agar semua rakyat Indonesia mendapat keadilan yang sama. Tidak boleh ada yang terlalu kaya sementara yang lain sangat miskin. Kita harus berbagi dan peduli sesama.",nilai:["Bersikap adil kepada semua","Tidak serakah","Gemar menolong","Menghargai hasil kerja orang lain","Peduli lingkungan dan sesama"]}
+];
+
+const quizData=[
+  {q:"Apa arti kata 'Panca' dalam Pancasila?",emoji:"🔢",opts:["Tiga","Empat","Lima","Enam"],ans:2,expl:"'Panca' dari bahasa Sansekerta berarti Lima!"},
+  {q:"Lambang sila pertama adalah...",emoji:"⭐",opts:["Pohon Beringin","Rantai Emas","Bintang Emas","Kepala Banteng"],ans:2,expl:"Bintang Emas melambangkan cahaya Tuhan Yang Maha Esa!"},
+  {q:"Sila ke-3 berbunyi...",emoji:"🇮🇩",opts:["Keadilan Sosial","Persatuan Indonesia","Kemanusiaan yang Adil","Ketuhanan Yang Maha Esa"],ans:1,expl:"Sila ke-3: Persatuan Indonesia — kita harus bersatu!"},
+  {q:"Kapan Pancasila lahir?",emoji:"📅",opts:["17 Agustus 1945","1 Juni 1945","20 Mei 1908","28 Oktober 1928"],ans:1,expl:"Pancasila lahir 1 Juni 1945 saat Bung Karno berpidato di BPUPKI!"},
+  {q:"Lambang negara yang memuat Pancasila adalah...",emoji:"🦅",opts:["Bendera Merah Putih","Garuda Pancasila","Peta Indonesia","Sumpah Pemuda"],ans:1,expl:"Garuda Pancasila adalah lambang negara kita!"},
+  {q:"Sila ke-4 mengajarkan kita untuk...",emoji:"🤝",opts:["Rajin beribadah","Cinta tanah air","Musyawarah mufakat","Adil kepada semua"],ans:2,expl:"Sila ke-4 tentang musyawarah — memutuskan bersama-sama!"},
+  {q:"'Bhinneka Tunggal Ika' artinya...",emoji:"🌈",opts:["Satu Nusa Satu Bangsa","Berbeda-beda tetapi satu","Lima Dasar Negara","Tanah Air Indonesia"],ans:1,expl:"Berbeda-beda tetapi tetap satu juga!"},
+  {q:"Lambang sila ke-2 (Kemanusiaan) adalah...",emoji:"⛓️",opts:["Pohon Beringin","Kepala Banteng","Padi dan Kapas","Rantai"],ans:3,expl:"Rantai melambangkan hubungan antar manusia yang saling terhubung!"},
+  {q:"Contoh nilai sila ke-1 dalam kehidupan sehari-hari...",emoji:"🙏",opts:["Rajin membantu teman","Rajin beribadah","Musyawarah di kelas","Berbagi makanan"],ans:1,expl:"Sila ke-1 tentang Ketuhanan — rajin beribadah adalah pengamalannya!"},
+  {q:"Sila ke-5: Keadilan Sosial bagi...",emoji:"⚖️",opts:["Sebagian Rakyat","Rakyat Miskin","Seluruh Rakyat Indonesia","Pemerintah Indonesia"],ans:2,expl:"Keadilan untuk SELURUH Rakyat Indonesia — semua orang!"},
+];
+
+/* Extra battle questions */
+const battleQuestions = [
+  ...quizData,
+  {q:"Lambang sila ke-3 (Persatuan) adalah...",emoji:"🌳",opts:["Pohon Beringin","Bintang","Rantai","Padi dan Kapas"],ans:0,expl:"Pohon Beringin melambangkan persatuan Indonesia!"},
+  {q:"Lambang sila ke-5 adalah...",emoji:"🌾",opts:["Banteng","Bintang","Padi dan Kapas","Rantai"],ans:2,expl:"Padi dan Kapas melambangkan kemakmuran (keadilan sosial)!"},
+  {q:"Contoh pengamalan sila ke-3 adalah...",emoji:"🤝",opts:["Rajin beribadah","Bersatu tidak berkelahi","Musyawarah kelas","Berbagi dengan adil"],ans:1,expl:"Bersatu adalah pengamalan Sila ke-3 Persatuan Indonesia!"},
+  {q:"Siapa yang merumuskan Pancasila?",emoji:"🏛️",opts:["Soekarno","Soeharto","Hatta","Sutan Sjahrir"],ans:0,expl:"Soekarno (Bung Karno) yang berpidato merumuskan Pancasila!"},
+  {q:"Pancasila ditetapkan sebagai dasar negara pada...",emoji:"🗓️",opts:["1 Juni 1945","17 Agustus 1945","18 Agustus 1945","28 Oktober 1945"],ans:2,expl:"Pancasila resmi ditetapkan 18 Agustus 1945 oleh PPKI!"},
+];
+
+/* ============================================
+   MATERI
+   ============================================ */
+function buildMateri(){
+  const cards = document.getElementById('sila-cards');
+  silaData.forEach(s=>{
+    const c=document.createElement('div');
+    c.className='sila-card';
+    c.innerHTML=`<div class="sila-num ${s.cb}">${s.num}</div>
+      <div class="sila-body">
+        <div class="sila-name ${s.tc}">${s.name}</div>
+        <div class="sila-latin">${s.latin}</div>
+        <div class="sila-detail" id="det-${s.num}">
+          <p>${s.desc}</p>
+          <ul class="nilai-list">${s.nilai.map(v=>`<li>${v}</li>`).join('')}</ul>
+        </div>
+      </div>
+      <span class="chev">▼</span>`;
+    c.onclick=()=>{
+      const open=c.classList.contains('open');
+      document.querySelectorAll('.sila-card').forEach(x=>{x.classList.remove('open');document.getElementById('det-'+x.querySelector('.sila-num').textContent)?.classList.remove('open');});
+      if(!open){c.classList.add('open');document.getElementById('det-'+s.num).classList.add('open');addScore(1);}
+    };
+    cards.appendChild(c);
+  });
+}
+
+/* ============================================
+   GAME - MEMORY
+   ============================================ */
+let memFlipped=[],memMatched=0,memMoves=0,memLock=false;
+const memData=[
+  {front:"⭐",back:"Ketuhanan",color:"#8B2020"},
+  {front:"⛓️",back:"Kemanusiaan",color:"#C07820"},
+  {front:"🌳",back:"Persatuan",color:"#1E7A1E"},
+  {front:"🐂",back:"Kerakyatan",color:"#1A5EA0"},
+  {front:"🌾",back:"Keadilan",color:"#5A5A00"},
+];
+function buildMemory(){
+  const board=document.getElementById('game-memory');
+  const pairs=[...memData,...memData].sort(()=>Math.random()-0.5);
+  memFlipped=[];memMatched=0;memMoves=0;memLock=false;
+  board.innerHTML=`<div class="game-title">🃏 Kartu Memori</div>
+    <div class="game-sub">Temukan pasangan lambang & nama sila!</div>
+    <div class="game-info">
+      <div class="gstat">Gerakan: <span id="mem-moves">0</span></div>
+      <div class="gstat">Pasangan: <span id="mem-matched">0</span>/5</div>
+    </div>
+    <div class="game-board" id="mem-board"></div>
+    <div id="game-msg"></div>
+    <button class="btn btn-sm btn-sec" style="margin-top:0.5rem;" onclick="buildMemory()">🔄 Main Lagi</button>`;
+  const brd=document.getElementById('mem-board');
+  pairs.forEach((p,i)=>{
+    const w=document.createElement('div');w.className='gc-wrap';
+    const c=document.createElement('div');c.className='gc';c.dataset.idx=i;c.dataset.val=p.back;
+    c.innerHTML=`<div class="gcf">?</div><div class="gcb" style="background:${p.color}">${p.front==='⭐'||p.front==='⛓️'||p.front==='🌳'||p.front==='🐂'||p.front==='🌾'?p.front:''}<br style="line-height:0.5">${p.back}</div>`;
+    c.onclick=()=>flipCard(c);
+    w.appendChild(c);brd.appendChild(w);
+  });
+}
+function flipCard(c){
+  if(memLock||c.classList.contains('flipped')||c.classList.contains('matched'))return;
+  c.classList.add('flipped');memFlipped.push(c);
+  if(memFlipped.length===2){
+    memMoves++;document.getElementById('mem-moves').textContent=memMoves;
+    memLock=true;
+    setTimeout(()=>{
+      const [a,b]=memFlipped;
+      if(a.dataset.val===b.dataset.val){
+        a.classList.add('matched');b.classList.add('matched');
+        memMatched++;document.getElementById('mem-matched').textContent=memMatched;
+        addScore(5);
+        if(memMatched===5){document.getElementById('game-msg').textContent='🎉 Semua pasangan ditemukan! Hebat!';}
+      }else{a.classList.remove('flipped');b.classList.remove('flipped');}
+      memFlipped=[];memLock=false;
+    },900);
+  }
+}
+
+/* ============================================
+   GAME - JUMBLE
+   ============================================ */
+const jumbleWords=[
+  {word:"PANCASILA",hint:"Dasar negara Indonesia yang terdiri dari 5 sila"},
+  {word:"GARUDA",hint:"Burung lambang negara Indonesia"},
+  {word:"KETUHANAN",hint:"Sila pertama Pancasila"},
+  {word:"PERSATUAN",hint:"Sila ketiga — Bhinneka Tunggal Ika"},
+  {word:"KEADILAN",hint:"Sila kelima — untuk seluruh rakyat"},
+  {word:"MUSYAWARAH",hint:"Cara mengambil keputusan bersama (sila ke-4)"},
+  {word:"TOLERANSI",hint:"Sikap menghormati perbedaan agama"},
+  {word:"GOTONG",hint:"___ Royong — nilai Pancasila"},
+];
+let jumbleIdx=0;
+function buildJumble(){
+  const cont=document.getElementById('game-jumble');
+  if(jumbleIdx>=jumbleWords.length){
+    cont.innerHTML=`<div class="game-title">🔤 Kata Acak</div>
+      <p style="font-size:1rem;font-weight:700;color:#2E9E4F;margin:1rem 0;">🎉 Semua kata selesai! Kamu keren banget!</p>
+      <button class="btn btn-sm" onclick="jumbleIdx=0;buildJumble()">🔄 Ulangi</button>`;return;
+  }
+  const jw=jumbleWords[jumbleIdx];
+  const scrambled=jw.word.split('').sort(()=>Math.random()-0.5).join('');
+  cont.innerHTML=`<div class="game-title">🔤 Kata Acak</div>
+    <div class="game-sub">Susun huruf acak menjadi kata yang benar!</div>
+    <div class="jumble-word">${scrambled}</div>
+    <div class="jumble-hint">💡 Petunjuk: ${jw.hint}</div>
+    <input class="j-input" id="j-ans" placeholder="Ketik jawabanmu..." maxlength="15" oninput="this.value=this.value.toUpperCase()" onkeydown="if(event.key==='Enter')checkJumble()">
+    <br><br>
+    <button class="btn btn-sm" onclick="checkJumble()">✅ Cek!</button>
+    <button class="btn btn-sm btn-sec" style="margin-left:0.4rem;" onclick="jumbleIdx++;buildJumble()">⏭️ Skip</button>
+    <div id="jumble-msg" style="margin-top:0.8rem;font-weight:700;font-size:0.9rem;min-height:1.2rem;"></div>
+    <div style="margin-top:0.5rem;font-size:0.78rem;color:#aaa;">Soal ${jumbleIdx+1} / ${jumbleWords.length}</div>`;
+}
+function checkJumble(){
+  const ans=document.getElementById('j-ans').value.trim().toUpperCase();
+  const jw=jumbleWords[jumbleIdx];
+  const msg=document.getElementById('jumble-msg');
+  if(ans===jw.word){msg.style.color='#2E9E4F';msg.textContent='✅ Benar! +10 bintang!';addScore(10);setTimeout(()=>{jumbleIdx++;buildJumble();},1200);}
+  else{msg.style.color='#D83B2A';msg.textContent='❌ Coba lagi!';}
+}
+function setGame(type, btn){
+  document.getElementById('game-memory').style.display = type==='memory'?'block':'none';
+  document.getElementById('game-jumble').style.display = type==='jumble'?'block':'none';
+  document.querySelectorAll('.game-tab-btn').forEach(b=>b.classList.remove('active'));
+  if(btn) btn.classList.add('active');
+  if(type==='jumble') buildJumble();
+  if(type==='memory') buildMemory();
+}
+
+/* ============================================
+   QUIZ
+   ============================================ */
+let quizIdx=0,quizScore=0,quizAnswered=false;
+function buildQuiz(){
+  quizIdx=0;quizScore=0;quizAnswered=false;renderQuiz();
+}
+function renderQuiz(){
+  const cont=document.getElementById('quiz-container');
+  if(quizIdx>=quizData.length){
+    const pct=Math.round(quizScore/quizData.length*100);
+    const emoji=pct>=80?'🏆':pct>=60?'😊':pct>=40?'😅':'😢';
+    const msg=pct>=80?'Luar biasa! Kamu ahli Pancasila!':pct>=60?'Bagus! Terus belajar ya!':pct>=40?'Lumayan! Pelajari lagi yuk!':'Yuk belajar lebih rajin!';
+    addScore(quizScore*10);
+    cont.innerHTML=`<div class="qresult show"><span class="res-emoji">${emoji}</span><div class="res-score">${quizScore}/${quizData.length}</div><div class="res-msg">${msg}</div><div style="font-size:0.82rem;color:#aaa;margin-bottom:0.8rem;">+${quizScore*10} bintang ditambahkan!</div><button class="btn btn-sm" onclick="buildQuiz()">🔄 Kuis Lagi</button></div>`;
+    return;
+  }
+  const q=quizData[quizIdx];
+  cont.innerHTML=`<div style="font-family:'Fredoka One',cursive;font-size:1.25rem;color:#1a1a2e;margin-bottom:0.25rem;">Kuis Pancasila</div>
+    <div style="font-size:0.82rem;color:#aaa;margin-bottom:0.8rem;">Uji pengetahuanmu!</div>
+    <div class="qhdr">
+      <span class="qctr">${quizIdx+1}/${quizData.length}</span>
+      <div class="qprog-wrap"><div class="qprog-bar" style="width:${(quizIdx/quizData.length)*100}%"></div></div>
+      <span style="font-size:0.75rem;font-weight:700;color:#E8A020;">⭐${quizScore}</span>
+    </div>
+    <div class="quiz-q"><span class="qq-emoji">${q.emoji}</span><div class="qq-text">${q.q}</div></div>
+    <div class="quiz-opts" id="quiz-opts">
+      ${q.opts.map((o,i)=>`<button class="qopt" onclick="answerQuiz(${i})" id="qo-${i}"><span class="opt-l">${String.fromCharCode(65+i)}</span>${o}</button>`).join('')}
+    </div>
+    <div class="qfb" id="qfb"></div>
+    <div style="text-align:right;margin-top:0.5rem;">
+      <button class="btn btn-sm" id="next-btn" onclick="nextQuiz()" style="display:none;">Lanjut ➡️</button>
+    </div>`;
+  quizAnswered=false;
+}
+function answerQuiz(i){
+  if(quizAnswered)return;quizAnswered=true;
+  const q=quizData[quizIdx];
+  document.querySelectorAll('.qopt').forEach(o=>o.disabled=true);
+  const fb=document.getElementById('qfb');
+  if(i===q.ans){document.getElementById('qo-'+i).classList.add('correct');fb.textContent='✅ Benar! '+q.expl;fb.className='qfb show good';quizScore++;addScore(5);}
+  else{document.getElementById('qo-'+i).classList.add('wrong');document.getElementById('qo-'+q.ans).classList.add('correct');fb.textContent='❌ Salah. '+q.expl;fb.className='qfb show bad';}
+  document.getElementById('next-btn').style.display='inline-block';
+}
+function nextQuiz(){quizIdx++;renderQuiz();}
+
+/* ============================================
+   NILAI
+   ============================================ */
+const nilaiUtamaData=[
+  {icon:"🤲",title:"Religius",sub:"Sila ke-1",color:"#B02010",bg:"#fff5f3",border:"#f5c0b0",textc:"#8B1A0A",desc:"Percaya dan taat kepada Tuhan Yang Maha Esa sesuai agama dan keyakinan masing-masing.",contoh:["Rajin beribadah sesuai agamamu","Menghormati teman yang berbeda agama","Tidak mengganggu orang lain saat beribadah","Berdoa sebelum belajar dan makan"]},
+  {icon:"❤️",title:"Kemanusiaan",sub:"Sila ke-2",color:"#C07820",bg:"#fff9ee",border:"#f5d890",textc:"#7A4A00",desc:"Menghargai setiap manusia sebagai makhluk Tuhan yang memiliki derajat, hak, dan kewajiban yang sama.",contoh:["Menolong teman yang kesusahan","Bersikap adil tanpa membeda-bedakan","Tidak mengejek atau mempermalukan orang lain","Berkata sopan kepada semua orang"]},
+  {icon:"🤝",title:"Persatuan",sub:"Sila ke-3",color:"#1E7A1E",bg:"#f0fbf0",border:"#a0d8a0",textc:"#0F4F0F",desc:"Mengutamakan kepentingan bersama demi keutuhan dan kesatuan bangsa Indonesia.",contoh:["Bermain bersama teman dari suku berbeda","Bangga memakai batik & produk Indonesia","Tidak berkelahi dan saling rukun","Gotong royong membersihkan lingkungan"]},
+  {icon:"🗣️",title:"Demokrasi",sub:"Sila ke-4",color:"#1A5EA0",bg:"#eef5fd",border:"#a0c5f0",textc:"#0C3A6A",desc:"Mengambil keputusan bersama melalui musyawarah dengan mengutamakan kepentingan bersama.",contoh:["Musyawarah memilih ketua kelas","Menerima hasil voting dengan lapang dada","Mau mendengarkan pendapat teman","Tidak memaksakan kehendak sendiri"]},
+  {icon:"⚖️",title:"Keadilan",sub:"Sila ke-5",color:"#5A5A00",bg:"#fafaee",border:"#d0d090",textc:"#3A3A00",desc:"Berlaku adil dan merata kepada seluruh rakyat Indonesia dalam segala aspek kehidupan.",contoh:["Berbagi tugas piket secara adil","Tidak pelit dan mau berbagi","Menghargai kerja keras orang lain","Peduli kepada teman yang membutuhkan"]},
+  {icon:"💪",title:"Gotong Royong",sub:"Nilai umum",color:"#7B3DB0",bg:"#f6f0fd",border:"#d0a8f0",textc:"#4A2070",desc:"Bekerja bersama-sama secara sukarela demi kepentingan dan kesejahteraan bersama.",contoh:["Kerja bakti membersihkan kelas bersama","Membantu tetangga yang sedang kesulitan","Belajar kelompok dan saling mengajari","Saling berbagi saat ada yang kekurangan"]},
+];
+const nilaiSilaData=[
+  {num:1,cb:"c1b",bc:"#8B2020",bg:"#fff0f0",border:"#f5b0b0",textc:"#5A0F0F",title:"Ketuhanan",sym:"⭐",desc:"Sila pertama mengajarkan bahwa bangsa Indonesia percaya kepada Tuhan Yang Maha Esa.",nilai:["Beriman kepada Tuhan","Rajin beribadah","Toleransi antaragama","Tidak memaksakan agama","Menghormati pemeluk agama lain"]},
+  {num:2,cb:"c2b",bc:"#C07820",bg:"#fff9ee",border:"#f0c870",textc:"#7A4A00",title:"Kemanusiaan",sym:"⛓",desc:"Semua manusia memiliki derajat yang sama.",nilai:["Menghargai martabat manusia","Bersikap adil kepada semua","Suka menolong sesama","Tidak semena-mena","Menjunjung kebenaran"]},
+  {num:3,cb:"c3b",bc:"#1E7A1E",bg:"#eef9ee",border:"#90d090",textc:"#0A3F0A",title:"Persatuan",sym:"🌳",desc:"Meskipun berbeda suku, bahasa, dan budaya, kita tetap satu bangsa Indonesia.",nilai:["Cinta tanah air","Rela berkorban untuk bangsa","Bangga menjadi orang Indonesia","Menjaga persatuan","Menghargai keberagaman"]},
+  {num:4,cb:"c4b",bc:"#1A5EA0",bg:"#eef4fd",border:"#90b8e8",textc:"#0A3060",title:"Kerakyatan",sym:"🐂",desc:"Keputusan diambil bersama melalui musyawarah.",nilai:["Musyawarah untuk mufakat","Menghargai pendapat orang lain","Mengutamakan kepentingan bersama","Bertanggung jawab","Tidak memaksakan kehendak"]},
+  {num:5,cb:"c5b",bc:"#5A5A00",bg:"#f8f8e8",border:"#c8c870",textc:"#303000",title:"Keadilan",sym:"🌾",desc:"Semua rakyat Indonesia mendapat keadilan yang sama.",nilai:["Bersikap adil kepada semua","Tidak serakah","Gemar menolong","Menghargai hasil kerja orang","Peduli lingkungan dan sesama"]},
+];
+const nilaiKuisData=[
+  {q:"Nilai religius berasal dari sila ke...",opts:["Pertama","Kedua","Ketiga","Keempat"],ans:0,expl:"Sila ke-1 tentang Ketuhanan mengajarkan nilai religius."},
+  {q:"Musyawarah mufakat adalah contoh pengamalan sila...",opts:["Ke-2","Ke-3","Ke-4","Ke-5"],ans:2,expl:"Sila ke-4 tentang Kerakyatan mengajarkan musyawarah!"},
+  {q:"Gotong royong mencerminkan nilai...",opts:["Ketuhanan","Persatuan & Keadilan","Kemanusiaan saja","Kerakyatan saja"],ans:1,expl:"Gotong royong mencerminkan nilai persatuan dan keadilan sosial!"},
+  {q:"Menolong teman yang jatuh adalah contoh nilai...",opts:["Religius","Kemanusiaan","Persatuan","Keadilan"],ans:1,expl:"Menolong sesama adalah pengamalan nilai Kemanusiaan (sila ke-2)!"},
+  {q:"Toleransi beragama adalah pengamalan sila ke...",opts:["Satu","Dua","Tiga","Lima"],ans:0,expl:"Toleransi beragama adalah inti dari Sila ke-1: Ketuhanan Yang Maha Esa!"},
+  {q:"Bersikap adil, tidak serakah, peduli sesama mencerminkan sila...",opts:["Ke-2","Ke-3","Ke-4","Ke-5"],ans:3,expl:"Keadilan sosial bagi seluruh rakyat adalah sila ke-5!"},
+];
+const matchPairsData=[
+  {sila:"Sila 1: Ketuhanan",nilai:"Rajin beribadah"},
+  {sila:"Sila 2: Kemanusiaan",nilai:"Menolong sesama"},
+  {sila:"Sila 3: Persatuan",nilai:"Cinta tanah air"},
+  {sila:"Sila 4: Kerakyatan",nilai:"Musyawarah"},
+  {sila:"Sila 5: Keadilan",nilai:"Berbagi & adil"},
+];
+
+let activeNCard=null,nkuisIdx=0,nkuisScore=0,nkuisAnswered=false;
+let matchSelSila=null,matchSelNilai=null,matchDone=0;
+
+function switchNilai(id,btn){
+  document.querySelectorAll('.nilai-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nilai-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('npanel-'+id).classList.add('active');
+  btn.classList.add('active');
+}
+function buildNilai(){
+  const grid=document.getElementById('nilai-grid');
+  nilaiUtamaData.forEach((n,i)=>{
+    const c=document.createElement('div');c.className='ncard';
+    c.style.borderColor=n.border;
+    c.innerHTML=`<div class="ncard-check" style="color:${n.color}">✓</div><span class="ncard-icon">${n.icon}</span><div class="ncard-title" style="color:${n.color}">${n.title}</div><div class="ncard-sub">${n.sub}</div>`;
+    c.onclick=()=>{
+      document.querySelectorAll('.ncard').forEach(x=>x.classList.remove('active'));
+      if(activeNCard===i){activeNCard=null;showNDetail(null);}
+      else{activeNCard=i;c.classList.add('active');showNDetail(n);}
+    };
+    grid.appendChild(c);
+  });
+  const list=document.getElementById('nsila-list');
+  nilaiSilaData.forEach(s=>{
+    const row=document.createElement('div');row.className='nsila-row';
+    const pillsHtml=s.nilai.map(v=>`<span class="nsila-pill" style="background:${s.bg};color:${s.textc};border-color:${s.border};">${v}</span>`).join('');
+    row.innerHTML=`<div class="nsila-head"><div class="nsila-badge ${s.cb}">${s.sym}</div><div class="nsila-name">Sila ke-${s.num}: ${s.title}</div><span class="nsila-chev">▼</span></div>
+    <div class="nsila-body"><p style="margin-bottom:0.5rem;">${s.desc}</p><div style="font-size:0.75rem;font-weight:800;color:#aaa;margin-bottom:0.4rem;">Nilai yang terkandung:</div><div class="nsila-pills">${pillsHtml}</div></div>`;
+    row.onclick=()=>{const was=row.classList.contains('open');document.querySelectorAll('.nsila-row').forEach(r=>{r.classList.remove('open');r.style.borderColor='transparent';});if(!was){row.classList.add('open');row.style.borderColor=s.bc;addScore(1);}};
+    list.appendChild(row);
+  });
+  renderNKuis();buildMatch();
+}
+function showNDetail(n){
+  const box=document.getElementById('ndetail-box');
+  if(!n){box.innerHTML='<div class="ndetail-empty">Klik salah satu nilai di atas untuk melihat penjelasan dan contohnya.</div>';return;}
+  box.innerHTML=`<div style="display:flex;align-items:center;gap:0.65rem;margin-bottom:0.6rem;"><span style="font-size:1.8rem;">${n.icon}</span><div><div style="font-family:'Fredoka One',cursive;font-size:1.1rem;color:${n.color};">${n.title}</div><div style="font-size:0.7rem;color:#aaa;font-weight:700;text-transform:uppercase;letter-spacing:1px;">${n.sub}</div></div></div><p style="margin-bottom:0.6rem;">${n.desc}</p><div style="font-size:0.75rem;font-weight:800;color:#aaa;margin-bottom:0.35rem;">Contoh dalam kehidupan sehari-hari:</div><ul class="ndetail-contoh">${n.contoh.map(c=>`<li style="--cc:${n.color}"><span style="color:${n.color};">✓ </span>${c}</li>`).join('')}</ul>`;
+}
+function renderNKuis(){
+  const wrap=document.getElementById('nkuis-wrap');
+  if(nkuisIdx>=nilaiKuisData.length){
+    const pct=Math.round(nkuisScore/nilaiKuisData.length*100);
+    const emoji=pct>=80?'🏆':pct>=60?'😊':'📚';
+    addScore(nkuisScore*8);
+    wrap.innerHTML=`<div style="text-align:center;padding:1rem 0;"><div style="font-size:2.5rem;margin-bottom:0.4rem;">${emoji}</div><div style="font-family:'Fredoka One',cursive;font-size:2rem;color:#D83B2A;">${nkuisScore}/${nilaiKuisData.length}</div><button class="btn btn-sm" onclick="resetNKuis()">🔄 Kuis Lagi</button></div>`;
+    document.getElementById('nkuis-prog').textContent='Selesai!';return;
+  }
+  const q=nilaiKuisData[nkuisIdx];
+  wrap.innerHTML=`<div class="nkuis-q">${q.q}</div><div class="nkuis-opts">${q.opts.map((o,i)=>`<button class="nkuis-opt" id="nko${i}" onclick="answerNKuis(${i})"><span class="nkuis-lbl">${String.fromCharCode(65+i)}</span>${o}</button>`).join('')}</div><div class="nkuis-fb" id="nkuis-fb"></div><div style="text-align:right;margin-top:0.5rem;"><button class="btn btn-sm" id="nkuis-next" onclick="nextNKuis()" style="display:none;">Lanjut ➡️</button></div>`;
+  document.getElementById('nkuis-prog').textContent=`Soal ${nkuisIdx+1} / ${nilaiKuisData.length}`;
+  nkuisAnswered=false;
+}
+function answerNKuis(i){
+  if(nkuisAnswered)return;nkuisAnswered=true;
+  const q=nilaiKuisData[nkuisIdx];
+  document.querySelectorAll('.nkuis-opt').forEach(o=>o.disabled=true);
+  const fb=document.getElementById('nkuis-fb');
+  if(i===q.ans){document.getElementById('nko'+i).classList.add('correct');fb.textContent='✅ Benar! '+q.expl;fb.className='nkuis-fb show good';nkuisScore++;addScore(5);}
+  else{document.getElementById('nko'+i).classList.add('wrong');document.getElementById('nko'+q.ans).classList.add('correct');fb.textContent='❌ Salah. '+q.expl;fb.className='nkuis-fb show bad';}
+  document.getElementById('nkuis-next').style.display='inline-block';
+}
+function nextNKuis(){nkuisIdx++;renderNKuis();}
+function resetNKuis(){nkuisIdx=0;nkuisScore=0;nkuisAnswered=false;renderNKuis();}
+function buildMatch(){
+  const colS=document.getElementById('mcol-sila');const colN=document.getElementById('mcol-nilai');
+  colS.innerHTML='';colN.innerHTML='';
+  const shuffledNilai=[...matchPairsData].sort(()=>Math.random()-0.5);
+  matchPairsData.forEach((p,i)=>{
+    const s=document.createElement('div');s.className='match-item';s.textContent=p.sila;s.dataset.idx=i;
+    s.onclick=()=>selectMatch(s,'sila');colS.appendChild(s);
+  });
+  shuffledNilai.forEach(p=>{
+    const n=document.createElement('div');n.className='match-item';n.textContent=p.nilai;n.dataset.val=p.nilai;
+    n.onclick=()=>selectMatch(n,'nilai');colN.appendChild(n);
+  });
+  matchSelSila=null;matchSelNilai=null;matchDone=0;
+  document.getElementById('match-msg').textContent='';
+}
+function selectMatch(el,type){
+  if(el.classList.contains('matched-ok'))return;
+  if(type==='sila'){document.querySelectorAll('#mcol-sila .match-item:not(.matched-ok)').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');matchSelSila=el;}
+  else{document.querySelectorAll('#mcol-nilai .match-item:not(.matched-ok)').forEach(x=>x.classList.remove('selected'));el.classList.add('selected');matchSelNilai=el;}
+  if(matchSelSila&&matchSelNilai){
+    const idx=parseInt(matchSelSila.dataset.idx);const expected=matchPairsData[idx].nilai;const got=matchSelNilai.dataset.val;
+    if(expected===got){matchSelSila.classList.remove('selected');matchSelSila.classList.add('matched-ok');matchSelNilai.classList.remove('selected');matchSelNilai.classList.add('matched-ok');matchDone++;addScore(8);document.getElementById('match-msg').textContent=matchDone===5?'🎉 Semua cocok! Hebat banget!':'✅ Benar! Lanjutkan!';}
+    else{matchSelSila.classList.add('matched-err');matchSelNilai.classList.add('matched-err');document.getElementById('match-msg').textContent='❌ Belum cocok, coba lagi!';setTimeout(()=>{matchSelSila.classList.remove('selected','matched-err');matchSelNilai.classList.remove('selected','matched-err');matchSelSila=null;matchSelNilai=null;},800);return;}
+    matchSelSila=null;matchSelNilai=null;
+  }
+}
+function resetMatch(){buildMatch();}
+
+/* ============================================
+   BATTLE GAME — Real-time via Firebase REST API
+   
+   SETUP (gratis, 5 menit):
+   1. Buka https://console.firebase.google.com
+   2. Buat project baru → Realtime Database → Start in test mode
+   3. Copy URL database (bentuk: https://xxx.firebasedatabase.app)
+   4. Ganti FB_URL di bawah dengan URL database kamu
+   ============================================ */
+
+// ── Ganti dengan URL Firebase Realtime Database kamu ──
+// Contoh: 'https://pancaseru-xyz-default-rtdb.asia-southeast1.firebasedatabase.app'
+const FB_URL = (() => {
+  // Coba ambil dari localStorage kalau sudah diset
+  return localStorage.getItem('ps_fb_url') || '';
+})();
+
+// Lightweight REST helper (no SDK needed)
+async function fbGet(path){
+  const base=getFbUrl(); if(!base) return null;
+  try{
+    const r = await fetch(base+path+'.json');
+    return await r.json();
+  }catch(e){ return null; }
+}
+async function fbSet(path, data){
+  const base=getFbUrl(); if(!base) return;
+  try{
+    await fetch(base+path+'.json', {method:'PUT', body:JSON.stringify(data)});
+  }catch(e){}
+}
+async function fbPatch(path, data){
+  const base=getFbUrl(); if(!base) return;
+  try{
+    await fetch(base+path+'.json', {method:'PATCH', body:JSON.stringify(data)});
+  }catch(e){}
+}
+async function fbDelete(path){
+  const base=getFbUrl(); if(!base) return;
+  try{
+    await fetch(base+path+'.json', {method:'DELETE'});
+  }catch(e){}
+}
+
+// ── State ──
+let battleState   = null;
+let currentRoomCode = null;
+let battleTimerInterval = null;
+let fbPollInterval = null;
+let isSolo = false;
+let myRole = null; // 'host' | 'guest'
+let lastSeenTurn = -1; // prevent double-processing
+
+function genCode(){
+  const chars='ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+  return Array.from({length:4},()=>chars[Math.floor(Math.random()*chars.length)]).join('');
+}
+
+// ── LOBBY ──
+async function createRoom(){
+  if(!requireFbUrl()) return;
+  const code = genCode();
+  currentRoomCode = code;
+  myRole = 'host';
+
+  const roomData = {
+    host:      playerData.nama   || 'Pemain 1',
+    hostKelas: playerData.kelas  || 1,
+    guest:     null,
+    guestKelas:null,
+    status:    'waiting',   // waiting | starting | playing | ended
+    turn:      0,           // turn counter (0=host, 1=guest alternating)
+    hostHP:    100,
+    guestHP:   100,
+    hostPower: 0,
+    guestPower:0,
+    hostShield:false,
+    guestShield:false,
+    qSeed:     Date.now(),  // shared random seed so both see same questions
+    qIdx:      0,
+    action:    null,        // {by, correct, dmg, special, shield, heal, healAmt}
+    actionId:  0,
+    winner:    null,
+    createdAt: Date.now(),
+  };
+
+  await fbSet('/rooms/'+code, roomData);
+
+  document.getElementById('room-created-area').style.display='block';
+  document.getElementById('join-room-area').style.display='none';
+  document.getElementById('room-code-disp').textContent=code;
+  document.getElementById('btn-start-battle').style.display='none';
+  renderWaiting({host:roomData.host, hostKelas:roomData.hostKelas, guest:null});
+
+  // Poll until guest joins
+  fbPollInterval = setInterval(async ()=>{
+    const room = await fbGet('/rooms/'+code);
+    if(!room) return;
+    renderWaiting(room);
+    if(room.guest){
+      clearInterval(fbPollInterval);
+      document.getElementById('btn-start-battle').style.display='block';
+      document.querySelector('.waiting-spin').textContent='✅';
+    }
+    // Auto-clean stale rooms (>10min)
+    if(Date.now() - room.createdAt > 600000) fbDelete('/rooms/'+code);
+  }, 1500);
+}
+
+function showJoinRoom(){
+  document.getElementById('join-room-area').style.display='block';
+  document.getElementById('room-created-area').style.display='none';
+}
+
+async function joinRoom(){
+  if(!requireFbUrl()) return;
+  const code = document.getElementById('join-code').value.trim().toUpperCase();
+  if(!code || code.length!==4){ showAlert('Masukkan kode 4 huruf!'); return; }
+
+  const room = await fbGet('/rooms/'+code);
+  if(!room){        showAlert('Room tidak ditemukan! Minta temanmu buat room dulu.'); return; }
+  if(room.guest){   showAlert('Room sudah penuh!'); return; }
+  if(room.status!=='waiting'){ showAlert('Battle sudah dimulai!'); return; }
+
+  currentRoomCode = code;
+  myRole = 'guest';
+
+  await fbPatch('/rooms/'+code, {
+    guest:      playerData.nama   || 'Pemain 2',
+    guestKelas: playerData.kelas  || 1,
+  });
+
+  document.getElementById('room-created-area').style.display='block';
+  document.getElementById('join-room-area').style.display='none';
+  document.getElementById('room-code-disp').textContent=code;
+  document.querySelector('.waiting-spin').textContent='⏳';
+  renderWaiting({...room, guest: playerData.nama||'Pemain 2', guestKelas: playerData.kelas});
+
+  // Poll until host starts
+  fbPollInterval = setInterval(async ()=>{
+    const r = await fbGet('/rooms/'+code);
+    if(!r) return;
+    renderWaiting(r);
+    if(r.status==='starting'){
+      clearInterval(fbPollInterval);
+      beginOnlineGame(r);
+    }
+  }, 1000);
+}
+
+function renderWaiting(room){
+  const listEl = document.getElementById('players-waiting-list');
+  if(!listEl) return;
+  listEl.innerHTML = `
+    <div class="player-slot filled">
+      <div style="font-size:1.4rem;">🦅</div>
+      <div class="player-slot-name">${room.host||'?'}</div>
+      <div class="player-slot-class">Kelas ${room.hostKelas||'?'}</div>
+    </div>
+    <div class="player-slot ${room.guest?'filled':''}">
+      <div style="font-size:1.4rem;">${room.guest?'🦅':'❓'}</div>
+      <div class="player-slot-name">${room.guest||'Menunggu...'}</div>
+      <div class="player-slot-class">${room.guest?'Kelas '+(room.guestKelas||'?'):'---'}</div>
+    </div>`;
+}
+
+async function startBattle(){
+  clearInterval(fbPollInterval);
+  const room = await fbGet('/rooms/'+currentRoomCode);
+  if(!room || !room.guest){ showAlert('Teman belum bergabung!'); return; }
+  await fbPatch('/rooms/'+currentRoomCode, {status:'starting'});
+  beginOnlineGame(room);
+}
+
+// ── ONLINE GAME ENGINE ──
+function seededShuffle(arr, seed){
+  // Simple seeded RNG (mulberry32)
+  let s=seed>>>0;
+  const rng=()=>{ s+=0x6D2B79F5; let t=s; t=Math.imul(t^t>>>15,t|1); t^=t+Math.imul(t^t>>>7,t|61); return ((t^t>>>14)>>>0)/4294967296; };
+  const a=[...arr];
+  for(let i=a.length-1;i>0;i--){ const j=Math.floor(rng()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; }
+  return a;
+}
+
+function beginOnlineGame(room){
+  const questions = seededShuffle(battleQuestions, room.qSeed);
+  const isHost = (myRole==='host');
+
+  battleState = {
+    questions,
+    isOnline:  true,
+    isSolo:    false,
+    isHost,
+    youName:   isHost ? room.host  : room.guest,
+    enemyName: isHost ? room.guest : room.host,
+    youHP:     100, enemyHP: 100,
+    yourPower: 0,
+    shielded:  false,
+    enemyShielded: false,
+    answered:  false,
+    lastActionId: 0,
+  };
+  lastSeenTurn = -1;
+
+  showArena();
+  document.getElementById('you-name').textContent   = battleState.youName;
+  document.getElementById('enemy-name').textContent = battleState.enemyName;
+
+  // Read room state and render
+  syncRoomToLocal(room);
+  renderOnlineBattle();
+
+  // Poll for opponent actions
+  fbPollInterval = setInterval(async ()=>{
+    if(!battleState || !battleState.isOnline) return;
+    const r = await fbGet('/rooms/'+currentRoomCode);
+    if(!r) return;
+    if(r.winner){ endBattle(r.winner===myRole); clearInterval(fbPollInterval); return; }
+    syncRoomToLocal(r);
+    // Process new opponent action
+    if(r.actionId && r.actionId > battleState.lastActionId){
+      battleState.lastActionId = r.actionId;
+      const act = r.action;
+      if(act && act.by !== myRole){
+        processOpponentAction(act);
+      }
+    }
+    // Sync HP
+    if(isHost){ battleState.youHP=r.hostHP; battleState.enemyHP=r.guestHP; }
+    else       { battleState.youHP=r.guestHP; battleState.enemyHP=r.hostHP; }
+    updateHPBars();
+    // Sync turn display
+    const myTurn = (r.turn===0)===isHost;
+    updateTurnUI(myTurn);
+  }, 1200);
+}
+
+function syncRoomToLocal(r){
+  if(!battleState) return;
+  const isHost = battleState.isHost;
+  battleState.youHP    = isHost ? r.hostHP   : r.guestHP;
+  battleState.enemyHP  = isHost ? r.guestHP  : r.hostHP;
+  battleState.yourPower = isHost ? r.hostPower : r.guestPower;
+}
+
+function isMyTurnOnline(room_turn){
+  // turn 0 = host, 1 = guest
+  return (room_turn===0) === battleState.isHost;
+}
+
+async function getMyTurn(){
+  const r = await fbGet('/rooms/'+currentRoomCode+'/turn');
+  return (r===0) === battleState.isHost;
+}
+
+function renderOnlineBattle(){
+  if(!battleState) return;
+  updateHPBars();
+  showNextQuestion();
+}
+
+function showNextQuestion(){
+  if(!battleState) return;
+  fbGet('/rooms/'+currentRoomCode).then(r=>{
+    if(!r) return;
+    const qIdx = r.qIdx || 0;
+    const q = battleState.questions[qIdx % battleState.questions.length];
+    document.getElementById('bq-emoji').textContent = q.emoji;
+    document.getElementById('bq-text').textContent  = q.q;
+    const myTurn = isMyTurnOnline(r.turn);
+    const opts = document.getElementById('battle-opts');
+    opts.innerHTML = q.opts.map((o,i)=>`<button class="bopt" onclick="battleAnswerOnline(${i})" id="bo-${i}">
+      <span class="opt-l">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');
+    updateTurnUI(myTurn);
+    updatePowerBar();
+    battleState.answered = false;
+    startBattleTimer(myTurn);
+    if(!myTurn) disableBattleOpts();
+  });
+}
+
+function updateTurnUI(myTurn){
+  document.getElementById('your-turn-badge').style.display  = myTurn?'inline-block':'none';
+  document.getElementById('enemy-turn-badge').style.display = myTurn?'none':'inline-block';
+}
+
+function updateHPBars(){
+  if(!battleState) return;
+  const y=Math.max(0,battleState.youHP), e=Math.max(0,battleState.enemyHP);
+  document.getElementById('you-hp-bar').style.width   = y+'%';
+  document.getElementById('enemy-hp-bar').style.width = e+'%';
+  document.getElementById('you-hp-val').textContent   = y+' HP';
+  document.getElementById('enemy-hp-val').textContent = e+' HP';
+}
+
+function updatePowerBar(){
+  const p = battleState.yourPower||0;
+  document.getElementById('power-fill').style.width = (p/5*100)+'%';
+  document.getElementById('power-val').textContent  = p+'/5';
+  document.getElementById('btn-special').disabled   = p<5;
+}
+
+async function battleAnswerOnline(i){
+  if(!battleState || battleState.answered) return;
+  const myTurn = await getMyTurn();
+  if(!myTurn){ setLog('⏳ Bukan giliranmu!',''); return; }
+
+  clearInterval(battleTimerInterval);
+  battleState.answered = true;
+  disableBattleOpts();
+
+  const r = await fbGet('/rooms/'+currentRoomCode);
+  if(!r) return;
+  const qIdx = r.qIdx||0;
+  const q = battleState.questions[qIdx % battleState.questions.length];
+  const correct = (i===q.ans);
+  const dmg = correct ? (15+Math.floor(Math.random()*10)) : 0;
+  const penalty = correct ? 0 : (8+Math.floor(Math.random()*5));
+
+  // Show locally
+  if(correct){
+    document.getElementById('bo-'+i).classList.add('correct');
+    setLog('⚔️ Benar! Kamu menyerang '+battleState.enemyName+' −'+dmg+' HP!','attack');
+    addScore(5);
+  } else {
+    document.getElementById('bo-'+i).classList.add('wrong');
+    document.getElementById('bo-'+q.ans).classList.add('correct');
+    setLog('❌ Salah! Lawan menyerang kamu −'+penalty+' HP!','attack');
+  }
+
+  // Compute new HP
+  const isHost = battleState.isHost;
+  let hostHP  = r.hostHP, guestHP = r.guestHP;
+  let hostP   = r.hostPower||0, guestP = r.guestPower||0;
+  let hShield = r.hostShield||false, gShield = r.guestShield||false;
+
+  if(correct){
+    // Attacker is me, defender is enemy
+    if(isHost){
+      if(gShield){ gShield=false; setLog('🛡️ Lawan memblok seranganmu!','shield'); }
+      else { guestHP=Math.max(0,guestHP-dmg); }
+      hostP = Math.min(5, hostP+1);
+    } else {
+      if(hShield){ hShield=false; setLog('🛡️ Lawan memblok seranganmu!','shield'); }
+      else { hostHP=Math.max(0,hostHP-dmg); }
+      guestP = Math.min(5, guestP+1);
+    }
+  } else {
+    // Penalty hits me
+    if(isHost){
+      if(hShield){ hShield=false; setLog('🛡️ Tamengmu menahan serangan!','shield'); }
+      else { hostHP=Math.max(0,hostHP-penalty); }
+    } else {
+      if(gShield){ gShield=false; setLog('🛡️ Tamengmu menahan serangan!','shield'); }
+      else { guestHP=Math.max(0,guestHP-penalty); }
+    }
+  }
+
+  // Check winner
+  let winner = null;
+  if(hostHP<=0)  winner='guest';
+  if(guestHP<=0) winner='host';
+
+  const newTurn = (r.turn===0) ? 1 : 0; // switch turn
+  await fbPatch('/rooms/'+currentRoomCode, {
+    hostHP, guestHP, hostPower:hostP, guestPower:guestP,
+    hostShield:hShield, guestShield:gShield,
+    turn: newTurn,
+    qIdx: qIdx+1,
+    action: {by:myRole, correct, dmg, penalty},
+    actionId: (r.actionId||0)+1,
+    winner,
+  });
+
+  battleState.youHP   = isHost ? hostHP  : guestHP;
+  battleState.enemyHP = isHost ? guestHP : hostHP;
+  battleState.yourPower = isHost ? hostP : guestP;
+  updateHPBars(); updatePowerBar();
+
+  if(winner){ endBattle(winner===myRole); return; }
+  setTimeout(showNextQuestion, 1400);
+}
+
+function processOpponentAction(act){
+  // Visually show what opponent did — HP already synced via poll
+  if(act.correct){
+    setLog('⚔️ '+battleState.enemyName+' menjawab benar! −'+act.dmg+' HP!','attack');
+    flashDamage('you-hud');
+  } else {
+    setLog('❌ '+battleState.enemyName+' menjawab salah! Giliranmu!','');
+  }
+  updateHPBars();
+}
+
+async function useShield(){
+  if(!battleState) return;
+  if((battleState.yourPower||0)<1){ setLog('⚡ Butuh 1 Power untuk Tameng!',''); return; }
+  const myTurn = await getMyTurn();
+  if(!myTurn){ setLog('⏳ Bukan giliranmu!',''); return; }
+  const isHost = battleState.isHost;
+  const r = await fbGet('/rooms/'+currentRoomCode);
+  if(!r) return;
+  const newP = Math.max(0,(isHost?r.hostPower:r.guestPower)-1);
+  const patch = isHost
+    ? {hostShield:true,  hostPower:newP}
+    : {guestShield:true, guestPower:newP};
+  await fbPatch('/rooms/'+currentRoomCode, patch);
+  battleState.yourPower = newP;
+  battleState.shielded  = true;
+  updatePowerBar();
+  setLog('🛡️ Tameng aktif! Serangan berikutnya diblok!','shield');
+}
+
+async function useHeal(){
+  if(!battleState) return;
+  if((battleState.yourPower||0)<2){ setLog('⚡ Butuh 2 Power untuk Pulih!',''); return; }
+  const myTurn = await getMyTurn();
+  if(!myTurn){ setLog('⏳ Bukan giliranmu!',''); return; }
+  const isHost = battleState.isHost;
+  const r = await fbGet('/rooms/'+currentRoomCode);
+  if(!r) return;
+  const heal = 15+Math.floor(Math.random()*10);
+  const newHP  = Math.min(100,(isHost?r.hostHP:r.guestHP)+heal);
+  const newP   = Math.max(0,(isHost?r.hostPower:r.guestPower)-2);
+  const patch  = isHost
+    ? {hostHP:newHP,  hostPower:newP}
+    : {guestHP:newHP, guestPower:newP};
+  await fbPatch('/rooms/'+currentRoomCode, patch);
+  battleState.youHP     = newHP;
+  battleState.yourPower = newP;
+  updateHPBars(); updatePowerBar();
+  flashHeal('you-hud');
+  setLog('💊 Pulih +'+heal+' HP!','heal');
+}
+
+async function useSpecial(){
+  if(!battleState || (battleState.yourPower||0)<5) return;
+  const isHost = battleState.isHost;
+  const r = await fbGet('/rooms/'+currentRoomCode);
+  if(!r) return;
+  const dmg = 35+Math.floor(Math.random()*15);
+  let hostHP=r.hostHP, guestHP=r.guestHP;
+  let hShield=r.hostShield||false, gShield=r.guestShield||false;
+  if(isHost){
+    if(gShield){ gShield=false; setLog('🛡️ Lawan memblok Serangan Khusus!','shield'); }
+    else { guestHP=Math.max(0,guestHP-dmg); setLog('⚡ SERANGAN KHUSUS GARUDA! −'+dmg+' HP!!','attack'); }
+  } else {
+    if(hShield){ hShield=false; setLog('🛡️ Lawan memblok Serangan Khusus!','shield'); }
+    else { hostHP=Math.max(0,hostHP-dmg); setLog('⚡ SERANGAN KHUSUS GARUDA! −'+dmg+' HP!!','attack'); }
+  }
+  let winner=null;
+  if(hostHP<=0) winner='guest';
+  if(guestHP<=0) winner='host';
+  await fbPatch('/rooms/'+currentRoomCode,{
+    hostHP,guestHP,hostShield:hShield,guestShield:gShield,
+    hostPower: isHost?0:r.hostPower, guestPower: isHost?r.guestPower:0, winner
+  });
+  battleState.youHP=isHost?hostHP:guestHP;
+  battleState.enemyHP=isHost?guestHP:hostHP;
+  battleState.yourPower=0;
+  updateHPBars(); updatePowerBar();
+  addScore(10);
+  if(winner) endBattle(winner===myRole);
+}
+
+// ── SOLO BOT GAME (unchanged logic, no Firebase) ──
+function startSoloBattle(){
+  isSolo=true; currentRoomCode=null; myRole='host';
+  const shuffled=[...battleQuestions].sort(()=>Math.random()-0.5);
+  battleState={
+    questions:shuffled, isOnline:false, isSolo:true, isHost:true,
+    youName:playerData.nama||'Kamu', enemyName:'Bot Pancasila 🤖',
+    youHP:100, enemyHP:100, yourPower:0, shielded:false, enemyShielded:false,
+    answered:false, yourTurn:true
+  };
+  showArena();
+  document.getElementById('you-name').textContent   = battleState.youName;
+  document.getElementById('enemy-name').textContent = battleState.enemyName;
+  renderSoloBattle();
+}
+
+function renderSoloBattle(){
+  if(!battleState||battleState.isOnline) return;
+  updateHPBars(); updatePowerBar();
+  updateTurnUI(battleState.yourTurn);
+  const qIdx = battleState.qIdx||0;
+  const q = battleState.questions[qIdx%battleState.questions.length];
+  document.getElementById('bq-emoji').textContent=q.emoji;
+  document.getElementById('bq-text').textContent=q.q;
+  const opts=document.getElementById('battle-opts');
+  opts.innerHTML=q.opts.map((o,i)=>`<button class="bopt" onclick="battleAnswerSolo(${i})" id="bo-${i}">
+    <span class="opt-l">${String.fromCharCode(65+i)}</span>${o}</button>`).join('');
+  battleState.answered=false;
+  startBattleTimer(battleState.yourTurn);
+  if(!battleState.yourTurn){
+    disableBattleOpts();
+    setLog('🤖 '+battleState.enemyName+' sedang menjawab...','');
+    setTimeout(()=>{
+      if(!battleState||battleState.isOnline) return;
+      botBattleAction(Math.random()>0.38, q.ans);
+    }, 1200+Math.random()*1200);
+  }
+}
+
+function battleAnswerSolo(i){
+  if(!battleState||battleState.answered||!battleState.yourTurn) return;
+  clearInterval(battleTimerInterval);
+  battleState.answered=true; disableBattleOpts();
+  const q=battleState.questions[(battleState.qIdx||0)%battleState.questions.length];
+  if(i===q.ans){
+    document.getElementById('bo-'+i).classList.add('correct');
+    const dmg=15+Math.floor(Math.random()*10);
+    battleState.yourPower=Math.min(5,(battleState.yourPower||0)+1);
+    applyDmgEnemy(dmg,'⚔️ Benar! Kamu menyerang '+battleState.enemyName+' −'+dmg+' HP!'); addScore(5);
+  } else {
+    document.getElementById('bo-'+i).classList.add('wrong');
+    document.getElementById('bo-'+q.ans).classList.add('correct');
+    const dmg=8+Math.floor(Math.random()*5);
+    applyDmgYou(dmg,'❌ Salah! '+battleState.enemyName+' menyerang kamu −'+dmg+' HP!');
+  }
+  updatePowerBar();
+  setTimeout(()=>checkBattleEnd(()=>{ battleState.yourTurn=false; battleState.qIdx=(battleState.qIdx||0)+1; renderSoloBattle(); }),1200);
+}
+
+function botBattleAction(correct, ansIdx){
+  clearInterval(battleTimerInterval);
+  if(!battleState) return;
+  battleState.answered=true; disableBattleOpts();
+  if(correct){
+    const dmg=10+Math.floor(Math.random()*8);
+    document.getElementById('bo-'+ansIdx).classList.add('correct');
+    applyDmgYou(dmg,'🤖 '+battleState.enemyName+' menjawab benar! −'+dmg+' HP!');
+  } else {
+    const wrongOpts=[0,1,2,3].filter(x=>x!==ansIdx);
+    document.getElementById('bo-'+wrongOpts[0]).classList.add('wrong');
+    document.getElementById('bo-'+ansIdx).classList.add('correct');
+    applyDmgEnemy(6,'🤖 '+battleState.enemyName+' menjawab salah! Kamu balik serang −6 HP!');
+  }
+  setTimeout(()=>checkBattleEnd(()=>{ battleState.yourTurn=true; battleState.qIdx=(battleState.qIdx||0)+1; renderSoloBattle(); }),1200);
+}
+
+function applyDmgYou(dmg, msg){
+  if(battleState.shielded){ battleState.shielded=false; setLog('🛡️ Tamengmu menahan serangan!','shield'); flashHeal('you-hud'); return; }
+  battleState.youHP=Math.max(0,battleState.youHP-dmg); setLog(msg,'attack'); flashDamage('you-hud');
+  updateHPBars();
+}
+function applyDmgEnemy(dmg, msg){
+  if(battleState.enemyShielded){ battleState.enemyShielded=false; setLog('🛡️ Lawan memblok seranganmu!','shield'); flashHeal('enemy-hud'); return; }
+  battleState.enemyHP=Math.max(0,battleState.enemyHP-dmg); setLog(msg,'attack'); flashDamage('enemy-hud');
+  updateHPBars();
+}
+
+// Solo shield/heal/special (no Firebase)
+function useShieldSolo(){
+  if(!battleState||battleState.isOnline){ return useShield(); }
+  if((battleState.yourPower||0)<1){ setLog('⚡ Butuh 1 Power untuk Tameng!',''); return; }
+  battleState.yourPower=Math.max(0,(battleState.yourPower||0)-1);
+  battleState.shielded=true; updatePowerBar();
+  setLog('🛡️ Tameng aktif!','shield');
+}
+function useHealSolo(){
+  if(!battleState||battleState.isOnline){ return useHeal(); }
+  if((battleState.yourPower||0)<2){ setLog('⚡ Butuh 2 Power untuk Pulih!',''); return; }
+  const heal=15+Math.floor(Math.random()*10);
+  battleState.yourPower=Math.max(0,(battleState.yourPower||0)-2);
+  battleState.youHP=Math.min(100,battleState.youHP+heal);
+  updateHPBars(); updatePowerBar(); flashHeal('you-hud');
+  setLog('💊 Pulih +'+heal+' HP!','heal');
+}
+function useSpecialSolo(){
+  if(!battleState||battleState.isOnline){ return useSpecial(); }
+  if((battleState.yourPower||0)<5) return;
+  const dmg=35+Math.floor(Math.random()*15);
+  battleState.yourPower=0;
+  applyDmgEnemy(dmg,'⚡ SERANGAN KHUSUS GARUDA! −'+dmg+' HP!!');
+  updatePowerBar(); addScore(10);
+  checkBattleEnd(()=>{});
+}
+
+// ── SHARED UTILS ──
+function flashDamage(id){ const el=document.getElementById(id); el.classList.add('damage-flash'); setTimeout(()=>el.classList.remove('damage-flash'),500); }
+function flashHeal(id){ const el=document.getElementById(id); el.classList.add('heal-flash'); setTimeout(()=>el.classList.remove('heal-flash'),500); }
+
+let battleTimerVal=15;
+function startBattleTimer(active){
+  clearInterval(battleTimerInterval);
+  battleTimerVal=15;
+  document.getElementById('bq-timer').style.width='100%';
+  if(!active) return; // only run timer when it's your turn
+  battleTimerInterval=setInterval(()=>{
+    battleTimerVal--;
+    document.getElementById('bq-timer').style.width=(battleTimerVal/15*100)+'%';
+    if(battleTimerVal<=0){
+      clearInterval(battleTimerInterval);
+      if(battleState&&!battleState.answered){
+        battleState.answered=true; disableBattleOpts();
+        if(battleState.isOnline){
+          // Time out: skip turn
+          fbGet('/rooms/'+currentRoomCode).then(r=>{
+            if(!r) return;
+            const newTurn=(r.turn===0)?1:0;
+            fbPatch('/rooms/'+currentRoomCode,{turn:newTurn,qIdx:(r.qIdx||0)+1,actionId:(r.actionId||0)+1,action:{by:myRole,correct:false,timeout:true}});
+            setLog('⏰ Waktu habis! Giliran lawan!','');
+            setTimeout(showNextQuestion,1400);
+          });
+        } else {
+          applyDmgYou(8,'⏰ Waktu habis! Lawan menyerang!');
+          setTimeout(()=>{ if(battleState){ battleState.qIdx=(battleState.qIdx||0)+1; checkBattleEnd(()=>{ battleState.yourTurn=false; renderSoloBattle(); }); } },1400);
+        }
+      }
+    }
+  },1000);
+}
+
+function disableBattleOpts(){ document.querySelectorAll('.bopt').forEach(b=>b.disabled=true); }
+
+function setLog(msg,type){ const el=document.getElementById('battle-log'); el.textContent=msg; el.className='battle-log '+(type||''); }
+
+function checkBattleEnd(cb){
+  if(!battleState) return;
+  if(battleState.youHP<=0){ endBattle(false); return; }
+  if(battleState.enemyHP<=0){ endBattle(true); return; }
+  cb();
+}
+
+function showArena(){
+  document.getElementById('battle-lobby').style.display='none';
+  document.getElementById('battle-arena').style.display='block';
+  document.getElementById('battle-result').style.display='none';
+  document.getElementById('battle-result').classList.remove('show');
+  document.getElementById('battle-arena-body').style.opacity='1';
+}
+
+function endBattle(youWon){
+  clearInterval(battleTimerInterval);
+  clearInterval(fbPollInterval);
+  if(battleState?.isOnline && currentRoomCode) fbDelete('/rooms/'+currentRoomCode);
+  const result=document.getElementById('battle-result');
+  document.getElementById('result-emoji').textContent=youWon?'🏆':'💪';
+  document.getElementById('result-title').textContent=youWon?'Menang!':'Kalah!';
+  document.getElementById('result-msg').textContent=youWon
+    ?'Luar biasa '+(battleState?.youName||'Kamu')+'! Kamu mengalahkan '+(battleState?.enemyName||'lawan')+'! +50 Bintang!'
+    :'Jangan menyerah! Belajar lagi dan tantang ulang!';
+  if(youWon) addScore(50);
+  result.style.display='block'; result.classList.add('show');
+  document.getElementById('battle-arena-body').style.opacity='0.4';
+  battleState=null;
+}
+
+function resetBattle(){
+  clearInterval(battleTimerInterval); clearInterval(fbPollInterval);
+  isSolo=false; battleState=null; currentRoomCode=null; myRole=null;
+  document.getElementById('battle-lobby').style.display='block';
+  document.getElementById('battle-arena').style.display='none';
+  document.getElementById('battle-result').style.display='none';
+  document.getElementById('battle-result').classList.remove('show');
+  document.getElementById('battle-arena-body').style.opacity='1';
+  document.getElementById('room-created-area').style.display='none';
+  document.getElementById('join-room-area').style.display='none';
+  document.getElementById('join-code').value='';
+}
+
+// Override HTML onclick attributes to route solo/online correctly
+function battleAnswer(i){ if(battleState?.isOnline) battleAnswerOnline(i); else battleAnswerSolo(i); }
+
+function showAlert(msg){ alert(msg); }
+
+/* ============================================
+   MISI MODE — Progressive Mission System
+   ============================================ */
+const misiData = [
+  {
+    id: 0, icon: '⭐', color: '#8B2020', bg: 'linear-gradient(135deg,#fff0f0,#fce8e6)',
+    title: 'Misi 1: Ketuhanan', desc: 'Pelajari sila pertama Pancasila!',
+    unlocked: true, needPerfect: true, passScore: 5, totalQ: 5,
+    questions: [
+      {q:"Sila pertama Pancasila berbunyi...",emoji:"⭐",opts:["Persatuan Indonesia","Ketuhanan Yang Maha Esa","Keadilan Sosial","Kemanusiaan"],ans:1,expl:"Sila ke-1: Ketuhanan Yang Maha Esa — percaya kepada Tuhan!"},
+      {q:"Lambang sila pertama adalah...",emoji:"🌟",opts:["Pohon Beringin","Rantai Emas","Bintang Emas","Kepala Banteng"],ans:2,expl:"Bintang Emas melambangkan cahaya Tuhan Yang Maha Esa!"},
+      {q:"Contoh pengamalan sila pertama adalah...",emoji:"🙏",opts:["Gotong royong","Rajin beribadah","Musyawarah","Berbagi makanan"],ans:1,expl:"Rajin beribadah adalah pengamalan sila ke-1 tentang Ketuhanan!"},
+      {q:"Toleransi beragama termasuk nilai sila ke...",emoji:"🤲",opts:["Dua","Tiga","Satu","Lima"],ans:2,expl:"Toleransi beragama adalah pengamalan Sila ke-1: Ketuhanan Yang Maha Esa!"},
+      {q:"Arti 'Ketuhanan Yang Maha Esa' adalah...",emoji:"✨",opts:["Percaya satu Tuhan","Percaya banyak tuhan","Tidak percaya Tuhan","Bebas memilih"],ans:0,expl:"Ketuhanan Yang Maha Esa berarti percaya kepada satu Tuhan yang Maha Esa!"}
+    ]
+  },
+  {
+    id: 1, icon: '⛓️', color: '#C07820', bg: 'linear-gradient(135deg,#fff9ee,#fdf0d0)',
+    title: 'Misi 2: Kemanusiaan', desc: 'Pahami nilai kemanusiaan yang adil!',
+    unlocked: false, needPerfect: true, passScore: 5, totalQ: 5,
+    questions: [
+      {q:"Sila kedua Pancasila berbunyi...",emoji:"⛓️",opts:["Keadilan Sosial","Persatuan Indonesia","Kemanusiaan yang Adil dan Beradab","Ketuhanan Yang Maha Esa"],ans:2,expl:"Sila ke-2: Kemanusiaan yang Adil dan Beradab!"},
+      {q:"Lambang sila kedua adalah...",emoji:"🔗",opts:["Bintang Emas","Rantai Emas","Pohon Beringin","Padi dan Kapas"],ans:1,expl:"Rantai Emas melambangkan hubungan antarmanusia yang kuat!"},
+      {q:"Menolong teman yang jatuh adalah contoh nilai...",emoji:"🤝",opts:["Ketuhanan","Kemanusiaan","Persatuan","Kerakyatan"],ans:1,expl:"Menolong sesama adalah pengamalan nilai Kemanusiaan (sila ke-2)!"},
+      {q:"Sikap yang TIDAK sesuai sila ke-2 adalah...",emoji:"❌",opts:["Bersikap adil","Menolong sesama","Menghina orang lain","Menghargai hak orang lain"],ans:2,expl:"Menghina orang lain TIDAK sesuai sila ke-2 yang mengajarkan menghargai manusia!"},
+      {q:"Semua manusia memiliki... yang sama menurut sila ke-2",emoji:"⚖️",opts:["Kekayaan","Derajat dan hak","Kemampuan","Penampilan"],ans:1,expl:"Sila ke-2 mengajarkan bahwa semua manusia memiliki derajat dan hak yang sama!"}
+    ]
+  },
+  {
+    id: 2, icon: '🌳', color: '#1E7A1E', bg: 'linear-gradient(135deg,#eef9ee,#d0f0d0)',
+    title: 'Misi 3: Persatuan', desc: 'Cintai tanah air Indonesia!',
+    unlocked: false, needPerfect: true, passScore: 5, totalQ: 5,
+    questions: [
+      {q:"Sila ketiga Pancasila berbunyi...",emoji:"🌳",opts:["Persatuan Indonesia","Ketuhanan Yang Maha Esa","Keadilan Sosial","Kemanusiaan"],ans:0,expl:"Sila ke-3: Persatuan Indonesia — satu bangsa, satu tanah air!"},
+      {q:"Semboyan Bhinneka Tunggal Ika artinya...",emoji:"🇮🇩",opts:["Bersatu kita teguh","Berbeda-beda tetapi tetap satu","Merdeka atau mati","Satu nusa satu bangsa"],ans:1,expl:"Bhinneka Tunggal Ika = Berbeda-beda tetapi tetap satu!"},
+      {q:"Lambang sila ketiga adalah...",emoji:"🌲",opts:["Bintang Emas","Kepala Banteng","Pohon Beringin","Rantai Emas"],ans:2,expl:"Pohon Beringin melambangkan persatuan dan tempat berlindung!"},
+      {q:"Bermain dengan teman dari suku berbeda adalah contoh...",emoji:"🤝",opts:["Sila ke-1","Sila ke-2","Sila ke-3","Sila ke-4"],ans:2,expl:"Bermain dengan berbagai suku mencerminkan nilai Persatuan Indonesia (sila ke-3)!"},
+      {q:"Yang BUKAN pengamalan sila ke-3 adalah...",emoji:"🏴",opts:["Cinta tanah air","Bangga produk Indonesia","Memecah belah teman","Gotong royong"],ans:2,expl:"Memecah belah teman bertentangan dengan nilai Persatuan Indonesia!"}
+    ]
+  },
+  {
+    id: 3, icon: '🐂', color: '#1A5EA0', bg: 'linear-gradient(135deg,#eef4fd,#d0e4f8)',
+    title: 'Misi 4: Kerakyatan', desc: 'Praktikkan musyawarah & demokrasi!',
+    unlocked: false, needPerfect: true, passScore: 5, totalQ: 5,
+    questions: [
+      {q:"Sila keempat berbicara tentang...",emoji:"🐂",opts:["Keadilan","Persatuan","Demokrasi dan musyawarah","Ketuhanan"],ans:2,expl:"Sila ke-4 mengajarkan demokrasi melalui musyawarah untuk mufakat!"},
+      {q:"Cara mengambil keputusan sesuai sila ke-4 adalah...",emoji:"🗣️",opts:["Sendiri","Memaksakan kehendak","Musyawarah bersama","Bertengkar"],ans:2,expl:"Musyawarah bersama adalah cara pengambilan keputusan sesuai sila ke-4!"},
+      {q:"Lambang sila keempat adalah...",emoji:"🐃",opts:["Padi dan Kapas","Bintang Emas","Kepala Banteng","Rantai Emas"],ans:2,expl:"Kepala Banteng melambangkan musyawarah — banteng adalah hewan yang bergerak bersama!"},
+      {q:"'Mufakat' dalam musyawarah berarti...",emoji:"✅",opts:["Keputusan satu orang","Kesepakatan bersama","Tidak ada keputusan","Keputusan pemimpin saja"],ans:1,expl:"Mufakat adalah kesepakatan yang dicapai bersama melalui musyawarah!"},
+      {q:"Sikap yang baik setelah kalah voting adalah...",emoji:"🤗",opts:["Marah-marah","Menerima dengan lapang dada","Tidak mau ikut lagi","Mengajak teman protes"],ans:1,expl:"Menerima hasil musyawarah dengan lapang dada adalah pengamalan sila ke-4!"}
+    ]
+  },
+  {
+    id: 4, icon: '🌾', color: '#5A5A00', bg: 'linear-gradient(135deg,#fafaee,#f0f0cc)',
+    title: 'Misi 5: Keadilan Sosial', desc: 'Wujudkan keadilan untuk semua!',
+    unlocked: false, needPerfect: true, passScore: 5, totalQ: 5,
+    questions: [
+      {q:"Sila kelima Pancasila berbunyi...",emoji:"🌾",opts:["Persatuan Indonesia","Keadilan Sosial bagi Seluruh Rakyat Indonesia","Ketuhanan Yang Maha Esa","Kemanusiaan yang Adil"],ans:1,expl:"Sila ke-5: Keadilan Sosial bagi Seluruh Rakyat Indonesia!"},
+      {q:"Lambang sila kelima adalah...",emoji:"🌿",opts:["Pohon Beringin","Bintang Emas","Padi dan Kapas","Rantai Emas"],ans:2,expl:"Padi dan Kapas melambangkan kemakmuran dan keadilan sosial!"},
+      {q:"Berbagi tugas piket secara adil adalah contoh...",emoji:"⚖️",opts:["Sila ke-1","Sila ke-2","Sila ke-3","Sila ke-5"],ans:3,expl:"Berbagi secara adil adalah pengamalan Keadilan Sosial (sila ke-5)!"},
+      {q:"Yang TIDAK mencerminkan sila ke-5 adalah...",emoji:"❌",opts:["Peduli sesama","Berbagi dengan teman","Bersikap serakah","Menghargai kerja keras orang"],ans:2,expl:"Bersikap serakah BERTENTANGAN dengan Keadilan Sosial bagi Seluruh Rakyat!"},
+      {q:"Padi dan Kapas dipilih sebagai lambang karena...",emoji:"🌾",opts:["Indonesia negara pertanian","Melambangkan kemakmuran dan kebutuhan pokok","Lambangnya bagus","Mudah digambar"],ans:1,expl:"Padi (makanan) dan Kapas (pakaian) = kebutuhan pokok rakyat = kemakmuran dan keadilan!"}
+    ]
+  }
+];
+
+// Misi progress — stored in localStorage
+let misiProgress = JSON.parse(localStorage.getItem('ps_misi') || '{}');
+// {0: {stars:3, done:true}, 1: {stars:2, done:true}, ...}
+
+function saveMisiProgress(){
+  localStorage.setItem('ps_misi', JSON.stringify(misiProgress));
+}
+
+let activeMisiId = null;
+let misiQIdx = 0, misiLives = 3, misiCorrect = 0, misiAnswered = false;
+
+function buildMisiLobby(){
+  const lobby = document.getElementById('misi-lobby');
+  const play  = document.getElementById('misi-play');
+  play.style.display = 'none';
+  lobby.style.display = 'block';
+
+  // Determine unlocked state based on progress
+  misiData.forEach((m, i) => {
+    if(i === 0) m.unlocked = true;
+    else {
+      const prev = misiProgress[i-1];
+      m.unlocked = prev && prev.stars === 3; // requires perfect (3 stars) to unlock next
+    }
+  });
+
+  let html = `<div class="misi-header">🎯 Misi Pancasila</div>
+    <div class="misi-sub">Selesaikan sempurna (⭐⭐⭐) untuk membuka misi berikutnya!</div>
+    <div class="misi-path">`;
+
+  misiData.forEach((m, i) => {
+    const prog = misiProgress[i];
+    const stars = prog ? prog.stars : 0;
+    const done  = prog && prog.done;
+    const starsHtml = [0,1,2].map(s => `<span style="font-size:1rem;opacity:${s < stars ? 1 : 0.25}">⭐</span>`).join('');
+    const badge = done ? `<span class="misi-badge selesai">✓ Selesai</span>` :
+                  !m.unlocked ? `<span class="misi-badge terkunci">🔒 Terkunci</span>` :
+                  `<span class="misi-badge baru">✨ Baru</span>`;
+    const cardCls = done ? 'misi-card completed' : m.unlocked ? 'misi-card unlocked' : 'misi-card locked';
+    const click = m.unlocked ? `onclick="startMisi(${i})"` : `onclick="showMisiLockMsg(${i})"`;
+
+    html += `${i > 0 ? '<div class="misi-connector"></div>' : ''}
+      <div class="${cardCls}" id="misi-card-${i}" ${click}>
+        ${badge}
+        <div class="misi-icon" style="background:${m.bg};">${m.icon}</div>
+        <div class="misi-body">
+          <div class="misi-title">${m.title}</div>
+          <div class="misi-desc">${m.desc}</div>
+          <div class="misi-stars">${starsHtml}</div>
+          ${!m.unlocked ? `<div class="misi-lock-msg" id="lock-msg-${i}">🔒 Selesaikan misi sebelumnya dengan sempurna (⭐⭐⭐) dulu!</div>` : ''}
+        </div>
+      </div>`;
+  });
+  html += '</div>';
+  lobby.innerHTML = html;
+}
+
+function startMisi(id){
+  activeMisiId = id;
+  misiQIdx = 0; misiLives = 3; misiCorrect = 0; misiAnswered = false;
+  document.getElementById('misi-lobby').style.display = 'none';
+  document.getElementById('misi-play').style.display = 'block';
+  renderMisiPlay();
+}
+
+function renderMisiPlay(){
+  const m = misiData[activeMisiId];
+  const play = document.getElementById('misi-play');
+
+  if(misiLives <= 0){
+    // FAILED — no progress saved unless already cleared before
+    play.innerHTML = `<div class="misi-play-wrap">
+      <div class="misi-result">
+        <span class="misi-result-emoji">😢</span>
+        <div class="misi-result-title" style="color:#D83B2A;">Gagal!</div>
+        <div class="misi-result-stars">
+          <span class="misi-star-big" style="opacity:0.2;">☆</span>
+          <span class="misi-star-big" style="opacity:0.2;">☆</span>
+          <span class="misi-star-big" style="opacity:0.2;">☆</span>
+        </div>
+        <div class="misi-result-msg">
+          Kamu kehabisan nyawa! Jangan menyerah, coba lagi ya! 💪<br>
+          <strong style="color:#D83B2A;">Harus jawab SEMUA benar (⭐⭐⭐) untuk buka misi berikutnya.</strong><br>
+          <span style="font-size:0.8rem;color:#aaa;">${misiCorrect}/${m.questions.length} jawaban benar</span>
+        </div>
+        <div class="misi-result-btns">
+          <button class="btn btn-sm" onclick="startMisi(${activeMisiId})">🔄 Coba Lagi</button>
+          <button class="btn btn-sm btn-sec" onclick="buildMisiLobby()">🏠 Semua Misi</button>
+        </div>
+      </div>
+    </div>`;
+    return;
+  }
+
+  if(misiQIdx >= m.questions.length){
+    // COMPLETED — calculate stars
+    const pct = misiCorrect / m.questions.length;
+    const stars = pct === 1 ? 3 : pct >= 0.8 ? 2 : pct >= 0.6 ? 1 : 0;
+    const prevStars = (misiProgress[activeMisiId]?.stars || 0);
+    const newStars = Math.max(stars, prevStars);
+    misiProgress[activeMisiId] = { stars: newStars, done: stars > 0 };
+    saveMisiProgress();
+    if(newStars === 3) addScore(100);
+    else if(newStars === 2) addScore(60);
+    else addScore(30);
+
+    // Unlock next?
+    const unlockNext = newStars === 3 && activeMisiId < misiData.length - 1;
+    const starsHtml = [0,1,2].map(s => `<span class="misi-star-big" style="opacity:${s < newStars ? 1 : 0.2};transform:${s < newStars ? 'scale(1.2)' : 'scale(1)'}">${s < newStars ? '⭐' : '☆'}</span>`).join('');
+    const msgText = newStars === 3 
+      ? `Luar biasa sempurna! ${unlockNext ? `🎉 Misi ${activeMisiId+2} terbuka!` : 'Kamu maestro Pancasila!'}`
+      : newStars >= 2 
+      ? `Bagus! Tapi kamu perlu nilai sempurna (⭐⭐⭐) untuk buka misi berikutnya. Coba lagi!`
+      : `Masih perlu belajar lagi. Ulangi misi ini ya!`;
+
+    play.innerHTML = `<div class="misi-play-wrap">
+      <div class="misi-result">
+        <span class="misi-result-emoji">${newStars === 3 ? '🏆' : newStars >= 2 ? '😊' : '📚'}</span>
+        <div class="misi-result-title">${newStars === 3 ? 'Sempurna!' : newStars >= 2 ? 'Bagus!' : 'Terus Belajar!'}</div>
+        <div class="misi-result-stars">${starsHtml}</div>
+        <div class="misi-result-msg">${msgText}<br><span style="font-size:0.8rem;color:#aaa;">${misiCorrect}/${m.questions.length} jawaban benar</span></div>
+        <div class="misi-result-btns">
+          ${newStars < 3 ? `<button class="btn btn-sm" onclick="startMisi(${activeMisiId})">🔄 Coba Lagi</button>` : ''}
+          ${unlockNext ? `<button class="btn btn-sm btn-green" onclick="startMisi(${activeMisiId+1})">▶️ Misi ${activeMisiId+2}</button>` : ''}
+          <button class="btn btn-sm btn-sec" onclick="buildMisiLobby()">🏠 Semua Misi</button>
+        </div>
+      </div>
+    </div>`;
+    // Animate stars popping in
+    setTimeout(() => {
+      play.querySelectorAll('.misi-star-big').forEach((s, idx) => {
+        if(idx < newStars) setTimeout(() => s.classList.add('pop'), idx * 180);
+      });
+    }, 100);
+    return;
+  }
+
+  const q = m.questions[misiQIdx];
+  const livesHtml = [0,1,2].map(i => `<span style="font-size:1rem;">${i < misiLives ? '❤️' : '🖤'}</span>`).join('');
+
+  play.innerHTML = `<div class="misi-play-wrap">
+    <div class="misi-play-title">${m.icon} ${m.title}</div>
+    <div class="misi-play-prog">
+      <div class="misi-lives">${livesHtml}</div>
+      <div class="misi-prog-bar"><div class="misi-prog-fill" style="width:${(misiQIdx/m.questions.length)*100}%"></div></div>
+      <span style="font-size:0.72rem;font-weight:800;color:#aaa;white-space:nowrap;">${misiQIdx+1}/${m.questions.length}</span>
+    </div>
+    <div class="misi-q">
+      <span class="misi-q-emoji">${q.emoji}</span>
+      <div class="misi-q-text">${q.q}</div>
+    </div>
+    <div class="misi-opts">
+      ${q.opts.map((o,i) => `<button class="mopt" id="mopt-${i}" onclick="answerMisi(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="misi-fb" id="misi-fb"></div>
+    <div style="text-align:right;"><button class="btn btn-sm" id="misi-next" onclick="nextMisiQ()" style="display:none;">Lanjut ➡️</button></div>
+  </div>`;
+  misiAnswered = false;
+}
+
+function answerMisi(i){
+  if(misiAnswered) return;
+  misiAnswered = true;
+  const q = misiData[activeMisiId].questions[misiQIdx];
+  document.querySelectorAll('.mopt').forEach(b => b.disabled = true);
+  const fb = document.getElementById('misi-fb');
+  if(i === q.ans){
+    document.getElementById('mopt-'+i).classList.add('correct');
+    fb.textContent = '✅ Benar! ' + q.expl;
+    fb.className = 'misi-fb show good';
+    misiCorrect++;
+    addScore(8);
+  } else {
+    document.getElementById('mopt-'+i).classList.add('wrong');
+    document.getElementById('mopt-'+q.ans).classList.add('correct');
+    fb.textContent = '❌ Salah. ' + q.expl;
+    fb.className = 'misi-fb show bad';
+    misiLives--;
+  }
+  document.getElementById('misi-next').style.display = 'inline-block';
+  // Check lives
+  if(misiLives <= 0){
+    document.getElementById('misi-next').textContent = 'Lihat Hasil';
+    document.getElementById('misi-next').onclick = () => {
+      misiQIdx = misiData[activeMisiId].questions.length; // force result
+      renderMisiPlay();
+    };
+  }
+}
+
+function nextMisiQ(){
+  misiQIdx++;
+  renderMisiPlay();
+}
+
+function showMisiLockMsg(i){
+  // Show/hide the lock message for this card
+  const msg = document.getElementById('lock-msg-'+i);
+  if(!msg) return;
+  msg.style.display = 'block';
+  clearTimeout(msg._t);
+  msg._t = setTimeout(() => { msg.style.display = 'none'; }, 2500);
+}
+
+/* ============================================
+   ULAR TANGGA — Multiplayer 2–4 Pemain
+   ============================================ */
+
+// Board layout: 100 squares, snakes & ladders
+const SNAKES = {
+  // head → tail (go down)
+  99:21, 87:24, 62:19, 54:34, 46:9, 40:6, 27:10, 18:3
+};
+const LADDERS = {
+  // foot → top (go up)
+  2:23, 7:14, 8:30, 15:37, 22:42, 28:76, 36:57, 45:74, 68:89, 71:92
+};
+
+const DICE_FACES = ['⚀','⚁','⚂','⚃','⚄','⚅'];
+const PLAYER_COLORS = ['#D83B2A','#1A5EA0','#2E9E4F','#C07820'];
+const PLAYER_EMOJIS = ['🔴','🔵','🟢','🟡'];
+
+// Board questions (triggered when landing on specific squares — multiples of 5)
+const utQuestions = [...quizData, ...nilaiKuisData.map(q=>({...q, emoji:'💎'}))].slice(0,20);
+
+let utPlayers = [];
+let utCurrentPlayer = 0;
+let utGameActive = false;
+let utPlayerCount = 2;
+let utRolling = false;
+let utPendingMove = null; // {playerId, fromPos, toPos, steps, special}
+
+function openUlarTangga(){
+  document.getElementById('ut-overlay').style.display = 'block';
+  document.getElementById('ut-setup').style.display = 'block';
+  document.getElementById('ut-game').style.display = 'none';
+  document.getElementById('ut-question-panel').style.display = 'none';
+  document.getElementById('ut-winner-panel').style.display = 'none';
+  document.body.style.overflow = 'hidden';
+  utPlayerCount = 2;
+  renderUtNames();
+}
+
+function closeUlarTangga(){
+  document.getElementById('ut-overlay').style.display = 'none';
+  document.body.style.overflow = '';
+}
+
+function setUtCount(n, btn){
+  utPlayerCount = n;
+  document.querySelectorAll('.ut-count-btn').forEach(b => {
+    b.style.background = '#f9f4ee'; b.style.color = '#888'; b.style.borderColor = '#e8ddd0';
+  });
+  btn.style.background = '#D83B2A'; btn.style.color = '#fff'; btn.style.borderColor = '#D83B2A';
+  renderUtNames();
+}
+
+function renderUtNames(){
+  const defaultNames = [playerData.nama||'Pemain 1','Pemain 2','Pemain 3','Pemain 4'];
+  let html = `<div style="font-family:'Fredoka One',cursive;font-size:1rem;color:#1a1a2e;margin-bottom:0.8rem;">Nama Pemain</div>`;
+  for(let i = 0; i < utPlayerCount; i++){
+    html += `<div style="display:flex;align-items:center;gap:0.6rem;margin-bottom:0.6rem;">
+      <span style="font-size:1.3rem;">${PLAYER_EMOJIS[i]}</span>
+      <input id="ut-name-${i}" value="${defaultNames[i]}" style="flex:1;padding:0.6rem 0.9rem;border:2px solid #e8ddd0;border-radius:12px;font-family:'Nunito',sans-serif;font-size:0.9rem;font-weight:700;outline:none;color:#1a1a2e;" maxlength="15" placeholder="Nama pemain ${i+1}">
+    </div>`;
+  }
+  document.getElementById('ut-names').innerHTML = html;
+}
+
+function startUlarTangga(){
+  utPlayers = [];
+  for(let i = 0; i < utPlayerCount; i++){
+    const name = (document.getElementById('ut-name-'+i)?.value || 'Pemain '+(i+1)).trim();
+    utPlayers.push({ id:i, name, pos:0, color:PLAYER_COLORS[i], emoji:PLAYER_EMOJIS[i] });
+  }
+  utCurrentPlayer = 0;
+  utGameActive = true;
+  utRolling = false;
+  document.getElementById('ut-setup').style.display = 'none';
+  document.getElementById('ut-game').style.display = 'block';
+  drawUtBoard();
+  renderUtTurnInfo();
+  renderUtPlayersStatus();
+  document.getElementById('ut-log').innerHTML = `🎲 Game dimulai! Giliran <strong>${utPlayers[0].name}</strong> dulu!`;
+  document.getElementById('ut-dice-display').textContent = '🎲';
+}
+
+function resetUlarTangga(){
+  document.getElementById('ut-winner-panel').style.display = 'none';
+  document.getElementById('ut-question-panel').style.display = 'none';
+  openUlarTangga();
+}
+
+// ── Drawing the board ──
+function drawUtBoard(){
+  const canvas = document.getElementById('ut-canvas');
+  const container = canvas.parentElement;
+  const size = Math.min(container.clientWidth - 12, 480);
+  canvas.width = size; canvas.height = size;
+  canvas.style.width = size+'px'; canvas.style.height = size+'px';
+  const ctx = canvas.getContext('2d');
+  const cellW = size / 10;
+  const cellH = size / 10;
+
+  // Draw cells
+  for(let row = 0; row < 10; row++){
+    for(let col = 0; col < 10; col++){
+      const sq = getSquareNum(row, col);
+      const x = col * cellW;
+      const y = row * cellH;
+      // Color alternating
+      if(SNAKES[sq]){ ctx.fillStyle = '#fce8e6'; }
+      else if(LADDERS[sq]){ ctx.fillStyle = '#e8f8ee'; }
+      else { ctx.fillStyle = (row+col)%2===0 ? '#fff' : '#f9f4ee'; }
+      ctx.fillRect(x,y,cellW,cellH);
+      ctx.strokeStyle = '#e0d8cc'; ctx.lineWidth = 0.5;
+      ctx.strokeRect(x,y,cellW,cellH);
+
+      // Number
+      ctx.fillStyle = '#aaa'; ctx.font = `bold ${cellW*0.22}px Nunito,sans-serif`;
+      ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+      ctx.fillText(sq, x+cellW*0.5, y+2);
+
+      // Snake/Ladder icon
+      if(SNAKES[sq]){
+        ctx.font = `${cellW*0.38}px serif`;
+        ctx.fillText('🐍', x+cellW*0.5, y+cellH*0.35);
+      } else if(LADDERS[sq]){
+        ctx.font = `${cellW*0.38}px serif`;
+        ctx.fillText('🪜', x+cellW*0.5, y+cellH*0.35);
+      }
+    }
+  }
+
+  // Draw snakes (red lines from head to tail)
+  ctx.lineWidth = 2.5;
+  Object.entries(SNAKES).forEach(([head,tail])=>{
+    const [hx,hy] = squareCenter(parseInt(head), cellW, cellH);
+    const [tx,ty] = squareCenter(tail, cellW, cellH);
+    ctx.strokeStyle = 'rgba(216,59,42,0.5)';
+    ctx.setLineDash([4,3]);
+    ctx.beginPath(); ctx.moveTo(hx,hy); ctx.lineTo(tx,ty); ctx.stroke();
+  });
+
+  // Draw ladders (green lines from foot to top)
+  Object.entries(LADDERS).forEach(([foot,top])=>{
+    const [fx,fy] = squareCenter(parseInt(foot), cellW, cellH);
+    const [tx,ty] = squareCenter(top, cellW, cellH);
+    ctx.strokeStyle = 'rgba(46,158,79,0.5)';
+    ctx.setLineDash([6,3]);
+    ctx.beginPath(); ctx.moveTo(fx,fy); ctx.lineTo(tx,ty); ctx.stroke();
+  });
+  ctx.setLineDash([]);
+
+  // Draw players
+  utPlayers.forEach((p, idx) => {
+    if(p.pos === 0) return;
+    const [cx,cy] = squareCenter(p.pos, cellW, cellH);
+    const offset = [[-0.25,-0.25],[0.25,-0.25],[-0.25,0.25],[0.25,0.25]][idx] || [0,0];
+    ctx.font = `${cellW*0.35}px serif`;
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText(p.emoji, cx + offset[0]*cellW, cy + offset[1]*cellH);
+  });
+}
+
+function getSquareNum(row, col){
+  // row 0 = top (squares 91–100), row 9 = bottom (1–10)
+  const actualRow = 9 - row;
+  if(actualRow % 2 === 0){ // left to right
+    return actualRow * 10 + col + 1;
+  } else { // right to left
+    return actualRow * 10 + (9 - col) + 1;
+  }
+}
+
+function squareCenter(num, cellW, cellH){
+  // num 1–100 → grid position
+  const actualRow = Math.floor((num-1)/10); // 0 = bottom row
+  const col0 = (num-1) % 10;
+  const col = actualRow % 2 === 0 ? col0 : 9 - col0;
+  const row = 9 - actualRow; // canvas row (0=top)
+  return [col * cellW + cellW/2, row * cellH + cellH/2];
+}
+
+function renderUtTurnInfo(){
+  const p = utPlayers[utCurrentPlayer];
+  document.getElementById('ut-turn-info').innerHTML = `
+    <div style="display:flex;align-items:center;gap:0.5rem;">
+      <span style="font-size:1.5rem;">${p.emoji}</span>
+      <div>
+        <div style="font-weight:800;font-size:0.9rem;color:#1a1a2e;">${p.name}</div>
+        <div style="font-size:0.7rem;color:#aaa;font-weight:700;">Kotak ${p.pos}/100</div>
+      </div>
+    </div>
+    <div style="background:#fff5f0;border:1px solid #f5c0b0;border-radius:10px;padding:4px 12px;font-size:0.78rem;font-weight:800;color:#D83B2A;">Giliranmu!</div>`;
+}
+
+function renderUtPlayersStatus(){
+  const el = document.getElementById('ut-players-status');
+  el.style.gridTemplateColumns = utPlayers.length <= 2 ? '1fr 1fr' : 'repeat('+utPlayers.length+',1fr)';
+  el.innerHTML = utPlayers.map((p, i) => `
+    <div style="background:${i===utCurrentPlayer?'#fff5f0':'#fff'};border:2px solid ${i===utCurrentPlayer?p.color:'#f0e8d8'};border-radius:12px;padding:0.5rem 0.6rem;text-align:center;transition:all 0.3s;">
+      <div style="font-size:1.3rem;">${p.emoji}</div>
+      <div style="font-weight:800;font-size:0.75rem;color:#1a1a2e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${p.name}</div>
+      <div style="font-size:0.68rem;color:${p.color};font-weight:700;">Kotak ${p.pos}</div>
+    </div>`).join('');
+}
+
+async function rollDice(){
+  if(utRolling || !utGameActive) return;
+  utRolling = true;
+  const btn = document.getElementById('ut-roll-btn');
+  btn.disabled = true;
+  btn.textContent = '⏳ Melempar...';
+
+  // Animate dice
+  const diceEl = document.getElementById('ut-dice-display');
+  for(let i=0;i<8;i++){
+    diceEl.textContent = DICE_FACES[Math.floor(Math.random()*6)];
+    await sleep(70);
+  }
+  const roll = Math.floor(Math.random()*6)+1;
+  diceEl.textContent = DICE_FACES[roll-1];
+
+  const p = utPlayers[utCurrentPlayer];
+  const oldPos = p.pos;
+  let newPos = oldPos + roll;
+  if(newPos > 100) newPos = 100 - (newPos - 100); // bounce back
+
+  let logMsg = `${p.emoji} <strong>${p.name}</strong> dapat angka <strong>${roll}</strong>! Maju ke kotak ${newPos}.`;
+  let special = null;
+
+  // Check snake or ladder
+  if(SNAKES[newPos]){
+    special = 'snake';
+    const tail = SNAKES[newPos];
+    logMsg += ` 🐍 Kena ular! Turun ke kotak ${tail}!`;
+    p.pos = newPos;
+    drawUtBoard();
+    await sleep(600);
+    p.pos = tail; newPos = tail;
+  } else if(LADDERS[newPos]){
+    special = 'ladder';
+    const top = LADDERS[newPos];
+    logMsg += ` 🪜 Naik tangga! Naik ke kotak ${top}!`;
+    p.pos = newPos;
+    drawUtBoard();
+    await sleep(600);
+    p.pos = top; newPos = top;
+  } else {
+    p.pos = newPos;
+  }
+
+  drawUtBoard();
+  renderUtPlayersStatus();
+  document.getElementById('ut-log').innerHTML = logMsg;
+
+  // Win check
+  if(newPos >= 100){
+    utGameActive = false;
+    addScore(80);
+    await sleep(400);
+    showUtWinner(p);
+    utRolling = false;
+    return;
+  }
+
+  // Question on multiples of 5 that aren't snake/ladder
+  if(newPos % 5 === 0 && !special){
+    await sleep(400);
+    showUtQuestion(p, () => {
+      utNextTurn();
+    });
+    utRolling = false;
+    return;
+  }
+
+  await sleep(300);
+  utNextTurn();
+  utRolling = false;
+}
+
+function utNextTurn(){
+  utCurrentPlayer = (utCurrentPlayer + 1) % utPlayers.length;
+  renderUtTurnInfo();
+  renderUtPlayersStatus();
+  const btn = document.getElementById('ut-roll-btn');
+  btn.disabled = false;
+  btn.textContent = '🎲 Lempar Dadu!';
+  const p = utPlayers[utCurrentPlayer];
+  document.getElementById('ut-log').innerHTML = `🎲 Giliran <strong>${p.emoji} ${p.name}</strong>! Tekan tombol untuk lempar dadu!`;
+}
+
+function showUtQuestion(player, onDone){
+  const q = utQuestions[Math.floor(Math.random() * utQuestions.length)];
+  const panel = document.getElementById('ut-question-panel');
+  panel.style.display = 'flex';
+  document.getElementById('ut-q-label').textContent = `❓ Pertanyaan untuk ${player.name}`;
+  document.getElementById('ut-q-emoji').textContent = q.emoji || '❓';
+  document.getElementById('ut-q-text').textContent = q.q;
+  document.getElementById('ut-q-fb').style.display = 'none';
+  document.getElementById('ut-q-next').style.display = 'none';
+
+  const optsEl = document.getElementById('ut-q-opts');
+  optsEl.innerHTML = q.opts.map((o,i) => 
+    `<button onclick="answerUtQ(${i},${q.ans},${utCurrentPlayer})" style="background:#f9f4ee;border:2px solid #e8ddd0;border-radius:12px;padding:0.65rem 0.9rem;text-align:left;cursor:pointer;font-family:'Nunito',sans-serif;font-size:0.86rem;font-weight:600;transition:all 0.18s;display:flex;align-items:center;gap:0.5rem;" id="utq-opt-${i}">
+      <span style="width:24px;height:24px;border-radius:50%;background:#fff;border:2px solid #ddd;display:inline-flex;align-items:center;justify-content:center;font-size:0.7rem;font-weight:800;flex-shrink:0;">${String.fromCharCode(65+i)}</span>${o}
+    </button>`
+  ).join('');
+
+  window._utQDone = onDone;
+  window._utQExpl = q.expl || '';
+}
+
+function answerUtQ(selected, correct, pid){
+  document.querySelectorAll('#ut-q-opts button').forEach(b => b.disabled = true);
+  const fb = document.getElementById('ut-q-fb');
+  const p = utPlayers[pid];
+  
+  document.querySelectorAll('#ut-q-opts button').forEach((b,i) => {
+    if(i === correct) b.style.background = '#e8f8ee', b.style.borderColor = '#2E9E4F', b.style.color = '#1a7a3a';
+    if(i === selected && i !== correct) b.style.background = '#fce8e6', b.style.borderColor = '#D83B2A', b.style.color = '#a02010';
+  });
+
+  if(selected === correct){
+    fb.textContent = `✅ Benar! ${window._utQExpl} ${p.name} dapat bonus maju 3 kotak!`;
+    fb.style.background = '#e8f8ee'; fb.style.borderColor = '#2E9E4F'; fb.style.color = '#1a7a3a';
+    addScore(10);
+    // Bonus move
+    let bonus = p.pos + 3;
+    if(bonus > 100) bonus = 100;
+    if(SNAKES[bonus]) bonus = SNAKES[bonus];
+    if(LADDERS[bonus]) bonus = LADDERS[bonus];
+    p.pos = bonus;
+    drawUtBoard();
+    renderUtPlayersStatus();
+    // Check win
+    if(bonus >= 100){
+      document.getElementById('ut-q-next').style.display = 'block';
+      document.getElementById('ut-q-next').onclick = () => {
+        document.getElementById('ut-question-panel').style.display = 'none';
+        utGameActive = false;
+        showUtWinner(p);
+      };
+      fb.textContent += ' 🏆 Menang!';
+    }
+  } else {
+    fb.textContent = `❌ Salah. ${window._utQExpl} ${p.name} mundur 2 kotak.`;
+    fb.style.background = '#fce8e6'; fb.style.borderColor = '#D83B2A'; fb.style.color = '#a02010';
+    let back = Math.max(1, p.pos - 2);
+    if(SNAKES[back]) back = SNAKES[back];
+    p.pos = back;
+    drawUtBoard();
+    renderUtPlayersStatus();
+  }
+  fb.style.display = 'block'; fb.style.borderLeft = '4px solid';
+  document.getElementById('ut-q-next').style.display = 'block';
+  if(!fb.textContent.includes('Menang')){
+    document.getElementById('ut-q-next').onclick = () => {
+      document.getElementById('ut-question-panel').style.display = 'none';
+      if(window._utQDone) window._utQDone();
+    };
+  }
+}
+
+function utQuestionNext(){
+  document.getElementById('ut-question-panel').style.display = 'none';
+  if(window._utQDone) window._utQDone();
+}
+
+function showUtWinner(p){
+  document.getElementById('ut-winner-panel').style.display = 'flex';
+  document.getElementById('ut-winner-name').textContent = `${p.emoji} ${p.name} Menang!`;
+  document.getElementById('ut-winner-msg').textContent = `Selamat ${p.name}! Kamu adalah pemenang Ular Tangga Pancasila! 🎉 +80 Bintang ditambahkan!`;
+}
+
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+/* ============================================
+   INIT MISI on section switch — patched into showSection
+   ============================================ */
+// Patch showSection to also trigger misi build
+(function(){
+  const _orig = showSection;
+  window.showSection = function(id, btn){
+    _orig(id, btn);
+    if(id === 'misi') buildMisiLobby();
+  };
+})();
+
+
+async function saveFbUrl(){
+  const url = document.getElementById('fb-url-input').value.trim().replace(/\/+$/, '');
+  if(!url || !url.startsWith('https://')){ 
+    document.getElementById('fb-status').textContent='❌ URL tidak valid'; 
+    document.getElementById('fb-status').style.color='#D83B2A';
+    return; 
+  }
+  // Test connection
+  document.getElementById('fb-status').textContent='⏳ Menguji koneksi...';
+  try{
+    const r = await fetch(url+'/.json?shallow=true', {signal: AbortSignal.timeout(5000)});
+    if(r.ok || r.status===401){
+      localStorage.setItem('ps_fb_url', url);
+      // Update FB_URL — we need to reassign via module-level var trick
+      window._FB_URL = url;
+      document.getElementById('fb-status').textContent='✅ Terhubung! Siap battle!';
+      document.getElementById('fb-status').style.color='#2E9E4F';
+      document.getElementById('fb-setup-box').style.borderColor='#2E9E4F';
+      document.getElementById('fb-setup-box').style.background='#f0fdf4';
+    } else {
+      document.getElementById('fb-status').textContent='❌ Gagal: '+r.status+'. Pastikan Rules = public';
+      document.getElementById('fb-status').style.color='#D83B2A';
+    }
+  } catch(e){
+    document.getElementById('fb-status').textContent='❌ Gagal terhubung. Cek URL & internet.';
+    document.getElementById('fb-status').style.color='#D83B2A';
+  }
+}
+
+function getFbUrl(){
+  return window._FB_URL || localStorage.getItem('ps_fb_url') || '';
+}
+
+function requireFbUrl(){
+  const u = getFbUrl();
+  if(!u){ showAlert('Masukkan URL Firebase Database dulu di bagian Setup Multiplayer!'); return false; }
+  return true;
+}
+
+/* ============================================
+   INIT
+   ============================================ */
+buildMateri();
+buildMemory();
+buildJumble();
+buildQuiz();
+buildNilai();
+applyMascot('ob-mascot-svg','m-');
+
+// Pre-fill Firebase URL if already saved
+window.addEventListener('DOMContentLoaded', ()=>{
+  const saved = localStorage.getItem('ps_fb_url');
+  if(saved){
+    window._FB_URL = saved;
+    const inp = document.getElementById('fb-url-input');
+    if(inp) inp.value = saved;
+    const st = document.getElementById('fb-status');
+    if(st){ st.textContent='✅ Firebase tersimpan — siap battle!'; st.style.color='#2E9E4F'; }
+    const box = document.getElementById('fb-setup-box');
+    if(box){ box.style.borderColor='#2E9E4F'; box.style.background='#f0fdf4'; }
+  }
+});
+</script>
+</body>
+</html>
